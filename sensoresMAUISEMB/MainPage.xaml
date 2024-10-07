@@ -1,0 +1,64 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="sensoresMAUISEMB.MainPage"
+             Title="Sensor Dashboard">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="10" Spacing="10">
+
+            <!-- Accelerometer Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Accelerometer" Clicked="OnToggleAccelerometerClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Barometer Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Barometer" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="BarometerLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Barometer" Clicked="OnToggleBarometerClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Compass Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Compass" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="CompassLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Compass" Clicked="OnToggleCompassClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Gyroscope Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Gyroscope" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="GyroscopeLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Gyroscope" Clicked="OnToggleGyroscopeClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Magnetometer Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Magnetometer" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="MagnetometerLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Magnetometer" Clicked="OnToggleMagnetometerClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Orientation Sensor Card -->
+            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
+                <VerticalStackLayout>
+                    <Label Text="Orientation" FontSize="Medium" TextColor="Black" />
+                    <Label x:Name="OrientationLabel" Text="Not started" TextColor="Red" />
+                    <Button Text="Toggle Orientation" Clicked="OnToggleOrientationClicked" />
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
