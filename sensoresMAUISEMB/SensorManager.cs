@@ -1,17 +1,30 @@
-﻿using Microsoft.Maui.Animations;
-using System;
+﻿using SkiaSharp;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OxyPlot.Series;
+using OxyPlot;
+using OxyPlot.Maui.Skia;
+using OxyPlot.Axes;
+
 
 namespace sensoresMAUISEMB
 {
     class SensorManager
     {
-        Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel, ShakeLabel;
+        Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel;
+        Label ShakeLabel; // Label para mostrar a detecção de shake
 
-        public SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel, Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel)
+        public delegate void UpdatePlotDelegate(double x, double y, double z);
+        private UpdatePlotDelegate _updatePlot;
+
+        private PlotModel _plotModel;
+        private LineSeries _xAxisSeries, _yAxisSeries, _zAxisSeries;
+        private int _dataPointCount = 0;
+
+        public bool IsAccelerometerMonitoring => Accelerometer.Default.IsMonitoring;
+
+        public SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel,
+                             Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel,       
+                             UpdatePlotDelegate updatePlot)
         {
             AccelLabel = accelLabel;
             BarometerLabel = barometerLabel;
@@ -19,6 +32,48 @@ namespace sensoresMAUISEMB
             GyroscopeLabel = gyroscopeLabel;
             MagnetometerLabel = magnetometerLabel;
             OrientationLabel = orientationLabel;
+            _updatePlot = updatePlot;
+        }
+
+        public void SetPlotModel(PlotModel plotModel)
+        {
+            _plotModel = plotModel;
+            InitializePlot(); // Inicializa as séries do gráfico usando o modelo
+        }
+
+        private void InitializePlot()
+        {
+            // Verifica se _plotModel é nulo para evitar NullReferenceException
+            if (_plotModel == null)
+            {
+                throw new InvalidOperationException("O modelo do gráfico deve ser definido antes da inicialização do gráfico.");
+            }
+
+            _xAxisSeries = new LineSeries { Title = "Eixo X", Color = OxyColors.Red };
+            _yAxisSeries = new LineSeries { Title = "Eixo Y", Color = OxyColors.Green };
+            _zAxisSeries = new LineSeries { Title = "Eixo Z", Color = OxyColors.Blue };
+
+            _plotModel.Series.Add(_xAxisSeries);
+            _plotModel.Series.Add(_yAxisSeries);
+            _plotModel.Series.Add(_zAxisSeries);
+        }
+
+        public void UpdatePlot(double x, double y, double z)
+        {
+            _xAxisSeries.Points.Add(new DataPoint(_dataPointCount, x));
+            _yAxisSeries.Points.Add(new DataPoint(_dataPointCount, y));
+            _zAxisSeries.Points.Add(new DataPoint(_dataPointCount, z));
+
+            _dataPointCount++;
+            _plotModel.InvalidatePlot(true); // Atualiza o gráfico para mostrar os novos dados
+        }
+
+        private void ClearPlotData()
+        {
+            _xAxisSeries.Points.Clear();
+            _yAxisSeries.Points.Clear();
+            _zAxisSeries.Points.Clear();
+            _dataPointCount = 0; // Reseta o contador de pontos
         }
 
         private async void ShowSensorNotSupportedMessage(string sensorName)
@@ -34,46 +89,87 @@ namespace sensoresMAUISEMB
             await App.Current.MainPage.DisplayAlert(title, message, cancel);
         }
 
-
         public void ToggleAccelerometer()
         {
             if (Accelerometer.Default.IsSupported)
             {
                 if (!Accelerometer.Default.IsMonitoring)
                 {
-                    Console.WriteLine("Accelerometer: Starting");
+                    Console.WriteLine("Acelerômetro: Iniciando");
                     Accelerometer.Default.ReadingChanged += Accelerometer_ReadingChanged;
                     Accelerometer.Default.Start(SensorSpeed.UI);
                 }
                 else
                 {
-                    Console.WriteLine("Accelerometer: Stopping");
+                    Console.WriteLine("Acelerômetro: Parando");
                     Accelerometer.Default.Stop();
                     Accelerometer.Default.ReadingChanged -= Accelerometer_ReadingChanged;
+                    ClearPlotData(); // Limpa os dados do gráfico
                 }
             }
             else
             {
                 ShowSensorNotSupportedMessage("Acelerômetro");
-                Console.WriteLine("Accelerometer: Not Supported");
+                Console.WriteLine("Acelerômetro: Não Suportado");
             }
         }
 
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
-            Console.WriteLine($"Accelerometer: Reading = {e.Reading}");
+            Console.WriteLine($"Acelerômetro: Leitura = {e.Reading}");
+
             if (AccelLabel != null)
             {
                 AccelLabel.TextColor = Colors.Green;
-                AccelLabel.Text = $"Accel: {e.Reading}";
+                
+
+                var data = e.Reading;
+                double x = data.Acceleration.X;
+                double y = data.Acceleration.Y;
+                double z = data.Acceleration.Z;
+
+                // Inicializa o modelo do gráfico quando o acelerômetro começa
+                if (_plotModel == null)
+                {
+                    InitializePlot(); // Inicializa o gráfico aqui
+                }
+
+                // Atualiza o gráfico com novos dados
+                UpdatePlot(x, y, z);
             }
             else
             {
-                Console.WriteLine("Accelerometer: AccelLabel is null!");
+                Console.WriteLine("Acelerômetro: AccelLabel é nulo!");
             }
         }
 
-        public void ToggleBarometer()
+        public void ToggleShake()
+        {
+            if (Accelerometer.Default.IsSupported)
+            {
+                if (!Accelerometer.Default.IsMonitoring)
+                {
+                    // Ativa o acelerômetro para detecção de shake
+                    Accelerometer.Default.ShakeDetected += Accelerometer_ShakeDetected;
+                    Accelerometer.Default.Start(SensorSpeed.Game);
+                }
+                else
+                {
+                    // Desativa o acelerômetro
+                    Accelerometer.Default.Stop();
+                    Accelerometer.Default.ShakeDetected -= Accelerometer_ShakeDetected;
+                }
+            }
+        }
+
+        private void Accelerometer_ShakeDetected(object sender, EventArgs e)
+        {
+            // Atualiza o UI Label com uma mensagem de "shake detected", em uma cor aleatória
+            ShakeLabel.TextColor = new Color(Random.Shared.Next(256), Random.Shared.Next(256), Random.Shared.Next(256));
+            ShakeLabel.Text = $"Shake detected";
+        }
+
+    public void ToggleBarometer()
         {
             if (Barometer.Default.IsSupported)
             {
@@ -149,31 +245,7 @@ namespace sensoresMAUISEMB
             }
         }
 
-        public void ToggleShake()
-        {
-            if (Accelerometer.Default.IsSupported)
-            {
-                if (!Accelerometer.Default.IsMonitoring)
-                {
-                    // Turn on accelerometer
-                    Accelerometer.Default.ShakeDetected += Accelerometer_ShakeDetected;
-                    Accelerometer.Default.Start(SensorSpeed.Game);
-                }
-                else
-                {
-                    // Turn off accelerometer
-                    Accelerometer.Default.Stop();
-                    Accelerometer.Default.ShakeDetected -= Accelerometer_ShakeDetected;
-                }
-            }
-        }
-
-        private void Accelerometer_ShakeDetected(object sender, EventArgs e)
-        {
-            // Update UI Label with a "shaked detected" notice, in a randomized color
-            ShakeLabel.TextColor = new Color(Random.Shared.Next(256), Random.Shared.Next(256), Random.Shared.Next(256));
-            ShakeLabel.Text = $"Shake detected";
-        }
+       
 
         public void ToggleGyroscope()
         {

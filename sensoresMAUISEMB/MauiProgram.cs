@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using OxyPlot.Maui.Skia;
+using SkiaSharp.Views.Maui.Controls;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace sensoresMAUISEMB
 {
@@ -9,6 +12,8 @@ namespace sensoresMAUISEMB
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
+                .UseOxyPlotSkia()
+                .UseSkiaSharp()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

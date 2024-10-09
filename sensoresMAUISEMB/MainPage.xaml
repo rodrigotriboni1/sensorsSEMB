@@ -1,10 +1,12 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:oxy="clr-namespace:OxyPlot.Maui.Skia;assembly=OxyPlot.Maui.Skia"
              x:Class="sensoresMAUISEMB.MainPage"
              Title="Sensor Dashboard">
 
     <ScrollView>
         <VerticalStackLayout Padding="10" Spacing="10">
+            
 
             <!-- Accelerometer Card -->
             <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
@@ -12,6 +14,13 @@
                     <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Accelerometer" Clicked="OnToggleAccelerometerClicked" />
+                    <oxy:PlotView x:Name="plotView"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
 
@@ -21,6 +30,13 @@
                     <Label Text="Barometer" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="BarometerLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Barometer" Clicked="OnToggleBarometerClicked" />
+                    <oxy:PlotView x:Name="_barometerSeries"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
 
@@ -30,6 +46,13 @@
                     <Label Text="Compass" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="CompassLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Compass" Clicked="OnToggleCompassClicked" />
+                    <oxy:PlotView x:Name="_compassSeries"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
 
@@ -39,6 +62,13 @@
                     <Label Text="Gyroscope" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="GyroscopeLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Gyroscope" Clicked="OnToggleGyroscopeClicked" />
+                    <oxy:PlotView x:Name="_gyroscopeSeries"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
 
@@ -48,6 +78,13 @@
                     <Label Text="Magnetometer" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="MagnetometerLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Magnetometer" Clicked="OnToggleMagnetometerClicked" />
+                    <oxy:PlotView x:Name="_magnetometerSeries"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
 
@@ -57,6 +94,13 @@
                     <Label Text="Orientation" FontSize="Medium" TextColor="Black" />
                     <Label x:Name="OrientationLabel" Text="Not started" TextColor="Red" />
                     <Button Text="Toggle Orientation" Clicked="OnToggleOrientationClicked" />
+                    <oxy:PlotView x:Name="_orientationSeries"
+                      Model="{Binding PlotModel}" 
+                      DefaultTrackerTemplate="{x:Null}"
+                      WidthRequest="300" 
+                      HeightRequest="300" 
+                      VerticalOptions="Center" 
+                      HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Frame>
         </VerticalStackLayout>
