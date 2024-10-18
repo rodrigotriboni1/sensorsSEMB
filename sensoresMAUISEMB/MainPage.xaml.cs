@@ -1,26 +1,18 @@
-﻿using OxyPlot.Series;
-using OxyPlot;
-using SkiaSharp;
-using System.Collections.Generic; // Ensure you include this
-using OxyPlot.Axes;
-using OxyPlot.Maui.Skia;
+﻿using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using Microsoft.Maui.Controls;
+using System.Collections.ObjectModel;
 
 namespace sensoresMAUISEMB
 {
     public partial class MainPage : ContentPage
     {
         private SensorManager sensorManager;
-        private PlotModel _plotModel;
-        private const int MaxPoints = 100; // Maximum number of points to display 
-        private Queue<DataPoint> _dataPointsX = new Queue<DataPoint>(); // For X values
-        private Queue<DataPoint> _dataPointsY = new Queue<DataPoint>(); // For Y values
-        private Queue<DataPoint> _dataPointsZ = new Queue<DataPoint>(); // For Z values
-
+        public ObservableCollection<ISeries> SensorSeries { get; set; }
+        private int maxPoints = 70;
         public MainPage()
         {
             InitializeComponent();
-
-            InitializePlotModel(); // Initialize the plot model
 
             sensorManager = new SensorManager(
                 AccelLabel,
@@ -28,14 +20,41 @@ namespace sensoresMAUISEMB
                 CompassLabel,
                 GyroscopeLabel,
                 MagnetometerLabel,
-                OrientationLabel,
-                UpdatePlot);
+                OrientationLabel);
 
-            sensorManager.SetPlotModel(_plotModel); // Pass the PlotModel to SensorManager
+            SensorSeries = new ObservableCollection<ISeries>
+            {
+                new LineSeries<double> { Name = "X Axis", 
+                    GeometrySize = 0,
+                    LineSmoothness = 0,
+                    Fill = null,
+                    GeometryFill = null,
+                    GeometryStroke = null,
+                    Values = new ObservableCollection<double>() },
+                new LineSeries<double> { Name = "Y Axis",
+                    GeometrySize = 0,
+                    LineSmoothness = 0,
+                    Fill = null,
+                    GeometryFill = null,
+                    GeometryStroke = null,
+                    Values = new ObservableCollection<double>() },
+                new LineSeries<double> { Name = "Z Axis", 
+                    GeometrySize = 0,
+                    LineSmoothness = 0,
+                    Fill = null,
+                    GeometryFill = null,
+                    GeometryStroke = null,
+                    Values = new ObservableCollection<double>() }
+            };
+            sensorChart.Series = SensorSeries;
+
+            //sensorManager.ToggleAccelerometer();
         }
 
         private void OnToggleAccelerometerClicked(object sender, EventArgs e)
         {
+            sensorManager.AccelerometerReadingChanged += OnAccelerometerReadingChanged;
+
             sensorManager.ToggleAccelerometer();
         }
 
@@ -69,88 +88,32 @@ namespace sensoresMAUISEMB
             sensorManager.ToggleShake();
         }
 
-
-        private void InitializePlotModel()
+        private void OnAccelerometerReadingChanged(double x, double y, double z)
         {
-            _plotModel = new PlotModel
-            {
-                PlotMargins = new OxyThickness(0),
-            };
 
-            // Configure axes
-            var leftAxis = new LinearAxis
-            {
-                Position = AxisPosition.Left,
-                Title = "Sensor Value",
-            };
+            var xValues = SensorSeries[0].Values as ObservableCollection<double>;
+            var yValues = SensorSeries[1].Values as ObservableCollection<double>;
+            var zValues = SensorSeries[2].Values as ObservableCollection<double>;
 
-            var bottomAxis = new LinearAxis
-            {
-                Position = AxisPosition.Bottom,
-                Title = "Data Points",
-                Maximum = MaxPoints // Maximum number of points to display
-            };
+            if (xValues != null) xValues.Add(x);
+            if (yValues != null) yValues.Add(y);
+            if (zValues != null) zValues.Add(z);
 
-            _plotModel.Axes.Add(leftAxis);
-            _plotModel.Axes.Add(bottomAxis);
-
-            // Add series for each axis
-            _plotModel.Series.Add(new LineSeries { Title = "X Axis", Color = OxyColors.Red });
-            _plotModel.Series.Add(new LineSeries { Title = "Y Axis", Color = OxyColors.Green });
-            _plotModel.Series.Add(new LineSeries { Title = "Z Axis", Color = OxyColors.Blue });
-
-            plotView.Model = _plotModel;
+            if (xValues?.Count > maxPoints) xValues.RemoveAt(0);
+            if (yValues?.Count > maxPoints) yValues.RemoveAt(0);
+            if (zValues?.Count > maxPoints) zValues.RemoveAt(0);
         }
 
-        public void UpdatePlot(double x, double y, double z)
+        private void OnToggleGraphClicked(object sender, EventArgs e)
         {
-            // Update data points for each axis
-            UpdateDataPoint(_dataPointsX, x);
-            UpdateDataPoint(_dataPointsY, y);
-            UpdateDataPoint(_dataPointsZ, z);
-
-            // Update the plot with the new data
-            RefreshPlot();
+            // Toggle the visibility of the chart
+            sensorChart.IsVisible = !sensorChart.IsVisible;
         }
 
-        private void UpdateDataPoint(Queue<DataPoint> dataPoints, double value)
+        private void OnOtherActionClicked(object sender, EventArgs e)
         {
-            if (dataPoints.Count >= MaxPoints)
-            {
-                dataPoints.Dequeue(); // Remove the oldest point if we already have MaxPoints
-            }
-
-            // Enqueue the new data point
-            dataPoints.Enqueue(new DataPoint(dataPoints.Count, value)); // X is the current index, Y is the sensor value
+            // Implement your other action here
         }
 
-        private void RefreshPlot()
-        {
-            // Clear previous series data
-            var xSeries = _plotModel.Series[0] as LineSeries;
-            var ySeries = _plotModel.Series[1] as LineSeries;
-            var zSeries = _plotModel.Series[2] as LineSeries;
-
-            xSeries.Points.Clear();
-            ySeries.Points.Clear();
-            zSeries.Points.Clear();
-
-            // Add current data points to the series
-            foreach (var point in _dataPointsX)
-            {
-                xSeries.Points.Add(point);
-            }
-            foreach (var point in _dataPointsY)
-            {
-                ySeries.Points.Add(point);
-            }
-            foreach (var point in _dataPointsZ)
-            {
-                zSeries.Points.Add(point);
-            }
-
-            // Notify that the model has changed
-            _plotModel.InvalidatePlot(true);
-        }
     }
 }

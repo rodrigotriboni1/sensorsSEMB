@@ -4,12 +4,28 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:sensoresMAUISEMB"
+    xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+    xmlns:icon="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
     Shell.FlyoutBehavior="Disabled"
     Title="sensoresMAUISEMB">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar x:Name="bottomTabbar">
+        <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage"
+            Icon="home.png"/>
+        <ShellContent
+            Title="Performance"
+            ContentTemplate="{DataTemplate local:Performance}"
+            Route="Performance"
+            Icon="memory.png"/>
+        <ShellContent
+            Title="Settings"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="ProfilePage"
+            Icon="settings.png"/>
+    </TabBar>
+    
 
 </Shell>

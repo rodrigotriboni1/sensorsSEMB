@@ -1,30 +1,17 @@
 ﻿using SkiaSharp;
 using System.Collections.Generic;
-using OxyPlot.Series;
-using OxyPlot;
-using OxyPlot.Maui.Skia;
-using OxyPlot.Axes;
 
 
 namespace sensoresMAUISEMB
 {
     class SensorManager
     {
-        Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel;
-        Label ShakeLabel; // Label para mostrar a detecção de shake
+        Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel, ShakeLabel;
 
-        public delegate void UpdatePlotDelegate(double x, double y, double z);
-        private UpdatePlotDelegate _updatePlot;
-
-        private PlotModel _plotModel;
-        private LineSeries _xAxisSeries, _yAxisSeries, _zAxisSeries;
-        private int _dataPointCount = 0;
-
-        public bool IsAccelerometerMonitoring => Accelerometer.Default.IsMonitoring;
+        public event Action<double, double, double> AccelerometerReadingChanged;
 
         public SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel,
-                             Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel,       
-                             UpdatePlotDelegate updatePlot)
+                             Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel)
         {
             AccelLabel = accelLabel;
             BarometerLabel = barometerLabel;
@@ -32,48 +19,6 @@ namespace sensoresMAUISEMB
             GyroscopeLabel = gyroscopeLabel;
             MagnetometerLabel = magnetometerLabel;
             OrientationLabel = orientationLabel;
-            _updatePlot = updatePlot;
-        }
-
-        public void SetPlotModel(PlotModel plotModel)
-        {
-            _plotModel = plotModel;
-            InitializePlot(); // Inicializa as séries do gráfico usando o modelo
-        }
-
-        private void InitializePlot()
-        {
-            // Verifica se _plotModel é nulo para evitar NullReferenceException
-            if (_plotModel == null)
-            {
-                throw new InvalidOperationException("O modelo do gráfico deve ser definido antes da inicialização do gráfico.");
-            }
-
-            _xAxisSeries = new LineSeries { Title = "Eixo X", Color = OxyColors.Red };
-            _yAxisSeries = new LineSeries { Title = "Eixo Y", Color = OxyColors.Green };
-            _zAxisSeries = new LineSeries { Title = "Eixo Z", Color = OxyColors.Blue };
-
-            _plotModel.Series.Add(_xAxisSeries);
-            _plotModel.Series.Add(_yAxisSeries);
-            _plotModel.Series.Add(_zAxisSeries);
-        }
-
-        public void UpdatePlot(double x, double y, double z)
-        {
-            _xAxisSeries.Points.Add(new DataPoint(_dataPointCount, x));
-            _yAxisSeries.Points.Add(new DataPoint(_dataPointCount, y));
-            _zAxisSeries.Points.Add(new DataPoint(_dataPointCount, z));
-
-            _dataPointCount++;
-            _plotModel.InvalidatePlot(true); // Atualiza o gráfico para mostrar os novos dados
-        }
-
-        private void ClearPlotData()
-        {
-            _xAxisSeries.Points.Clear();
-            _yAxisSeries.Points.Clear();
-            _zAxisSeries.Points.Clear();
-            _dataPointCount = 0; // Reseta o contador de pontos
         }
 
         private async void ShowSensorNotSupportedMessage(string sensorName)
@@ -102,47 +47,28 @@ namespace sensoresMAUISEMB
                 else
                 {
                     Console.WriteLine("Acelerômetro: Parando");
-                    Accelerometer.Default.Stop();
                     Accelerometer.Default.ReadingChanged -= Accelerometer_ReadingChanged;
-                    ClearPlotData(); // Limpa os dados do gráfico
+                    Accelerometer.Default.Stop();
                 }
             }
             else
             {
-                ShowSensorNotSupportedMessage("Acelerômetro");
                 Console.WriteLine("Acelerômetro: Não Suportado");
             }
         }
 
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
-            Console.WriteLine($"Acelerômetro: Leitura = {e.Reading}");
+            var data = e.Reading;
+            double x = data.Acceleration.X;
+            double y = data.Acceleration.Y;
+            double z = data.Acceleration.Z;
 
-            if (AccelLabel != null)
-            {
-                AccelLabel.TextColor = Colors.Green;
-                
+            AccelLabel.Text = $"X: {x:F4}, Y: {y:F4}, Z: {z:F4}";
+            AccelLabel.TextColor = Colors.Green;
 
-                var data = e.Reading;
-                double x = data.Acceleration.X;
-                double y = data.Acceleration.Y;
-                double z = data.Acceleration.Z;
-
-                // Inicializa o modelo do gráfico quando o acelerômetro começa
-                if (_plotModel == null)
-                {
-                    InitializePlot(); // Inicializa o gráfico aqui
-                }
-
-                // Atualiza o gráfico com novos dados
-                UpdatePlot(x, y, z);
-            }
-            else
-            {
-                Console.WriteLine("Acelerômetro: AccelLabel é nulo!");
-            }
+            AccelerometerReadingChanged?.Invoke(x, y, z);
         }
-
         public void ToggleShake()
         {
             if (Accelerometer.Default.IsSupported)
@@ -169,7 +95,7 @@ namespace sensoresMAUISEMB
             ShakeLabel.Text = $"Shake detected";
         }
 
-    public void ToggleBarometer()
+        public void ToggleBarometer()
         {
             if (Barometer.Default.IsSupported)
             {
@@ -245,7 +171,7 @@ namespace sensoresMAUISEMB
             }
         }
 
-       
+
 
         public void ToggleGyroscope()
         {
@@ -360,5 +286,7 @@ namespace sensoresMAUISEMB
                 Console.WriteLine("Orientation: OrientationLabel is null!");
             }
         }
+
+
     }
 }

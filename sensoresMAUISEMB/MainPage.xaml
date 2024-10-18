@@ -1,108 +1,84 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:oxy="clr-namespace:OxyPlot.Maui.Skia;assembly=OxyPlot.Maui.Skia"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+             xmlns:icon="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
              x:Class="sensoresMAUISEMB.MainPage"
              Title="Sensor Dashboard">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="10" Spacing="10">
-            
+    <!-- Main Layout -->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <!-- Accelerometer Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Accelerometer" Clicked="OnToggleAccelerometerClicked" />
-                    <oxy:PlotView x:Name="plotView"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
+        <!-- Scrollable Content -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="#F7F2F9">
 
-            <!-- Barometer Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Barometer" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="BarometerLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Barometer" Clicked="OnToggleBarometerClicked" />
-                    <oxy:PlotView x:Name="_barometerSeries"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
+                <!-- Accelerometer Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                    <VerticalStackLayout>
+                        <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
+                        <HorizontalStackLayout HorizontalOptions="End" Spacing="5">
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide Graph" Clicked="OnToggleGraphClicked"/>
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleAccelerometerClicked"/>
 
-            <!-- Compass Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Compass" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="CompassLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Compass" Clicked="OnToggleCompassClicked" />
-                    <oxy:PlotView x:Name="_compassSeries"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
+                        </HorizontalStackLayout>
+                        <lvc:CartesianChart x:Name="sensorChart" WidthRequest="500" HeightRequest="300" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                    </VerticalStackLayout>
+                </mdc:Card>
 
-            <!-- Gyroscope Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Gyroscope" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="GyroscopeLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Gyroscope" Clicked="OnToggleGyroscopeClicked" />
-                    <oxy:PlotView x:Name="_gyroscopeSeries"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
+                <!-- Barometer Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                    <VerticalStackLayout>
+                        <Label Text="Barometer" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="BarometerLabel" Text="Not started" TextColor="Red" />
+                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleBarometerClicked"/>
+                    </VerticalStackLayout>
+                </mdc:Card>
 
-            <!-- Magnetometer Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Magnetometer" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="MagnetometerLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Magnetometer" Clicked="OnToggleMagnetometerClicked" />
-                    <oxy:PlotView x:Name="_magnetometerSeries"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
+                <!-- Compass Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green" >
+                    <VerticalStackLayout>
+                        <Label Text="Compass" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="CompassLabel" Text="Not started" TextColor="Red" />
+                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleCompassClicked"/>
+                    </VerticalStackLayout>
+                </mdc:Card>
+                <!-- Gyroscope Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                    <VerticalStackLayout>
+                        <Label Text="Gyroscope" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="GyroscopeLabel" Text="Not started" TextColor="Red" />
+                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleGyroscopeClicked"/>
+                    </VerticalStackLayout>
+                </mdc:Card>
 
-            <!-- Orientation Sensor Card -->
-            <Frame BackgroundColor="White" BorderColor="LightGray" CornerRadius="10" HasShadow="True" Padding="10">
-                <VerticalStackLayout>
-                    <Label Text="Orientation" FontSize="Medium" TextColor="Black" />
-                    <Label x:Name="OrientationLabel" Text="Not started" TextColor="Red" />
-                    <Button Text="Toggle Orientation" Clicked="OnToggleOrientationClicked" />
-                    <oxy:PlotView x:Name="_orientationSeries"
-                      Model="{Binding PlotModel}" 
-                      DefaultTrackerTemplate="{x:Null}"
-                      WidthRequest="300" 
-                      HeightRequest="300" 
-                      VerticalOptions="Center" 
-                      HorizontalOptions="Center" />
-                </VerticalStackLayout>
-            </Frame>
-        </VerticalStackLayout>
-    </ScrollView>
+                <!-- Magnetometer Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green" >
+                    <VerticalStackLayout>
+                        <Label Text="Magnetometer" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="MagnetometerLabel" Text="Not started" TextColor="Red" />
+                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleMagnetometerClicked"/>
+                    </VerticalStackLayout>
+                </mdc:Card>
+
+                <!-- Orientation Sensor Card -->
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                    <VerticalStackLayout>
+                        <Label Text="Orientation" FontSize="Medium" TextColor="Black" />
+                        <Label x:Name="OrientationLabel" Text="Not started" TextColor="Red" />
+                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleOrientationClicked"/>
+                    </VerticalStackLayout>
+                </mdc:Card>
+
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        
+    </Grid>
+
 </ContentPage>
