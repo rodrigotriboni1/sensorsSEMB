@@ -21,47 +21,6 @@ namespace sensoresMAUISEMB
             OrientationLabel = orientationLabel;
         }
 
-        private void UpdateSensorLabel(Label label, string unit, params double[] readings)
-        {
-            if (label != null)
-            {
-                label.TextColor = Colors.Green;
-
-                // Formata a leitura com base na quantidade de valores
-                if (readings.Length == 1)
-                {
-                    label.Text = FormatSensorReading(2, readings[0]) + $" {unit}";
-                }
-                else if (readings.Length == 3 || readings.Length == 4)
-                {
-                    label.Text = FormatSensorReading(2, readings);
-                }
-            }
-            else
-            {
-                Console.WriteLine($"{label}: Label is null!");
-            }
-        }
-
-
-
-        public static string FormatSensorReading(int decimalPlaces = 2, params double[] values)
-        {
-            string format = $"F{decimalPlaces}";
-            var formattedValues = new List<string>();
-
-            // Nomeia os eixos conforme o número de valores (X, Y, Z, W)
-            string[] axisLabels = { "X", "Y", "Z", "W" };
-
-            for (int i = 0; i < values.Length && i < axisLabels.Length; i++)
-            {
-                formattedValues.Add($"{axisLabels[i]}: {values[i].ToString(format)}");
-            }
-
-            return string.Join(", ", formattedValues);
-        }
-
-
         private async void ShowSensorNotSupportedMessage(string sensorName)
         {
             string message = $"{sensorName} não é compatível com o celular.";
@@ -202,7 +161,7 @@ namespace sensoresMAUISEMB
             if (CompassLabel != null)
             {
                 CompassLabel.TextColor = Colors.Green;
-                CompassLabel.Text = $"{e.Reading:F2} degrees";
+                CompassLabel.Text = $"Compass: {e.Reading:F2} degrees";
             }
             else
             {
@@ -239,13 +198,16 @@ namespace sensoresMAUISEMB
         private void Gyroscope_ReadingChanged(object sender, GyroscopeChangedEventArgs e)
         {
             Console.WriteLine($"Gyroscope: Reading = {e.Reading}");
-
-            var reading = e.Reading;
-            // Usa UpdateSensorLabel para lidar com os três componentes do giroscópio (X, Y, Z)
-            UpdateSensorLabel(GyroscopeLabel, "°/s", reading.AngularVelocity.X, reading.AngularVelocity.Y, reading.AngularVelocity.Z);
+            if (GyroscopeLabel != null)
+            {
+                GyroscopeLabel.TextColor = Colors.Green;
+                GyroscopeLabel.Text = $"Gyroscope: {e.Reading}";
+            }
+            else
+            {
+                Console.WriteLine("Gyroscope: GyroscopeLabel is null!");
+            }
         }
-
-
 
         public void ToggleMagnetometer()
         {
@@ -274,12 +236,16 @@ namespace sensoresMAUISEMB
         private void Magnetometer_ReadingChanged(object sender, MagnetometerChangedEventArgs e)
         {
             Console.WriteLine($"Magnetometer: Reading = {e.Reading}");
-
-            var reading = e.Reading;
-            // Usa UpdateSensorLabel para lidar com os três componentes do magnetômetro (X, Y, Z)
-            UpdateSensorLabel(MagnetometerLabel, "µT", reading.MagneticField.X, reading.MagneticField.Y, reading.MagneticField.Z);
+            if (MagnetometerLabel != null)
+            {
+                MagnetometerLabel.TextColor = Colors.Green;
+                MagnetometerLabel.Text = $"Magnetometer: {e.Reading}";
+            }
+            else
+            {
+                Console.WriteLine("Magnetometer: MagnetometerLabel is null!");
+            }
         }
-
 
         public void ToggleOrientation()
         {
@@ -308,9 +274,17 @@ namespace sensoresMAUISEMB
         private void Orientation_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
         {
             Console.WriteLine($"Orientation: Reading = {e.Reading}");
-
-            var reading = e.Reading;
-            UpdateSensorLabel(OrientationLabel, "units", reading.Orientation.X, reading.Orientation.Y, reading.Orientation.Z, reading.Orientation.W);
+            if (OrientationLabel != null)
+            {
+                OrientationLabel.TextColor = Colors.Green;
+                OrientationLabel.Text = $"Orientation: {e.Reading}";
+            }
+            else
+            {
+                Console.WriteLine("Orientation: OrientationLabel is null!");
+            }
         }
+
+
     }
 }
