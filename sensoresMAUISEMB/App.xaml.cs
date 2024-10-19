@@ -9,6 +9,7 @@
             MainPage = new AppShell();
 
             DependencyService.Register<CPUInfoImplementation>();
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("");
 
         }
     }

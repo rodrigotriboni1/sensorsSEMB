@@ -87,6 +87,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="OxyPlot.Maui.Skia" Version="1.0.2" />
 		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
+		<PackageReference Include="Syncfusion.Licensing" Version="27.1.53" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
 	</ItemGroup>
 
