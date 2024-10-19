@@ -136,7 +136,7 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Compasso");
+                SensorUtils.ShowSensorNotSupportedMessage("Compass");
                 Console.WriteLine("Compass: Not Supported");
             }
         }
