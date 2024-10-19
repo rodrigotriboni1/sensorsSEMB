@@ -22,8 +22,8 @@
             Icon="memory.png"/>
         <ShellContent
             Title="Settings"
-            ContentTemplate="{DataTemplate local:MainPage}"
-            Route="ProfilePage"
+            ContentTemplate="{DataTemplate local:Settings}"
+            Route="Settings"
             Icon="settings.png"/>
     </TabBar>
     

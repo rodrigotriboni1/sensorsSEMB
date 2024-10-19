@@ -1,15 +1,14 @@
-﻿using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
+﻿using Syncfusion.Maui.Charts;
 using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
-
 namespace sensoresMAUISEMB
 {
     public partial class MainPage : ContentPage
     {
         private SensorManager sensorManager;
-        public ObservableCollection<ISeries> SensorSeries { get; set; }
+        private SensorChartManager sensorChartManager;
         private int maxPoints = 70;
+        private int timeCounter = 0;
         public MainPage()
         {
             InitializeComponent();
@@ -22,39 +21,13 @@ namespace sensoresMAUISEMB
                 MagnetometerLabel,
                 OrientationLabel);
 
-            SensorSeries = new ObservableCollection<ISeries>
-            {
-                new LineSeries<double> { Name = "X Axis", 
-                    GeometrySize = 0,
-                    LineSmoothness = 0,
-                    Fill = null,
-                    GeometryFill = null,
-                    GeometryStroke = null,
-                    Values = new ObservableCollection<double>() },
-                new LineSeries<double> { Name = "Y Axis",
-                    GeometrySize = 0,
-                    LineSmoothness = 0,
-                    Fill = null,
-                    GeometryFill = null,
-                    GeometryStroke = null,
-                    Values = new ObservableCollection<double>() },
-                new LineSeries<double> { Name = "Z Axis", 
-                    GeometrySize = 0,
-                    LineSmoothness = 0,
-                    Fill = null,
-                    GeometryFill = null,
-                    GeometryStroke = null,
-                    Values = new ObservableCollection<double>() }
-            };
-            sensorChart.Series = SensorSeries;
-
-            //sensorManager.ToggleAccelerometer();
+            // Inicializa o sensorChartManager passando o gráfico
+            sensorChartManager = new SensorChartManager(sensorChart);
         }
 
         private void OnToggleAccelerometerClicked(object sender, EventArgs e)
         {
             sensorManager.AccelerometerReadingChanged += OnAccelerometerReadingChanged;
-
             sensorManager.ToggleAccelerometer();
         }
 
@@ -90,30 +63,12 @@ namespace sensoresMAUISEMB
 
         private void OnAccelerometerReadingChanged(double x, double y, double z)
         {
-
-            var xValues = SensorSeries[0].Values as ObservableCollection<double>;
-            var yValues = SensorSeries[1].Values as ObservableCollection<double>;
-            var zValues = SensorSeries[2].Values as ObservableCollection<double>;
-
-            if (xValues != null) xValues.Add(x);
-            if (yValues != null) yValues.Add(y);
-            if (zValues != null) zValues.Add(z);
-
-            if (xValues?.Count > maxPoints) xValues.RemoveAt(0);
-            if (yValues?.Count > maxPoints) yValues.RemoveAt(0);
-            if (zValues?.Count > maxPoints) zValues.RemoveAt(0);
+            sensorChartManager.AddAccelerometerReading(x, y, z);
         }
 
         private void OnToggleGraphClicked(object sender, EventArgs e)
         {
-            // Toggle the visibility of the chart
             sensorChart.IsVisible = !sensorChart.IsVisible;
         }
-
-        private void OnOtherActionClicked(object sender, EventArgs e)
-        {
-            // Implement your other action here
-        }
-
     }
 }

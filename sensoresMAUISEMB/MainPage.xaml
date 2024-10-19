@@ -1,8 +1,9 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              xmlns:icon="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
+             
              x:Class="sensoresMAUISEMB.MainPage"
              Title="Sensor Dashboard">
 
@@ -16,20 +17,66 @@
         <!-- Scrollable Content -->
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="#F7F2F9">
-
                 <!-- Accelerometer Card -->
                 <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
-                        <HorizontalStackLayout HorizontalOptions="End" Spacing="5">
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide Graph" Clicked="OnToggleGraphClicked"/>
-                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleAccelerometerClicked"/>
-
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toggle On" Clicked="OnToggleAccelerometerClicked"/>
                         </HorizontalStackLayout>
-                        <lvc:CartesianChart x:Name="sensorChart" WidthRequest="500" HeightRequest="300" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="False" />
+                        <chart:SfCartesianChart x:Name="sensorChart" 
+                                                WidthRequest="300" 
+                                                HeightRequest="300" 
+                                                HorizontalOptions="Center" 
+                                                VerticalOptions="Center" 
+                                                IsVisible="False">
+
+                            <chart:SfCartesianChart.Title>
+                                <Label Margin="0,0,0,5" 
+                                       HorizontalOptions="Fill" HorizontalTextAlignment="Center" 
+                                       VerticalOptions="Center" FontSize="16"/>
+                            </chart:SfCartesianChart.Title>
+
+                            <chart:SfCartesianChart.XAxes>
+                                <chart:NumericalAxis ShowMajorGridLines="false" EdgeLabelsDrawingMode="Center">
+                                    <chart:NumericalAxis.Title>
+                                        <chart:ChartAxisTitle/>
+                                    </chart:NumericalAxis.Title>
+                                    <chart:NumericalAxis.LabelStyle>
+                                        <chart:ChartAxisLabelStyle/>
+                                    </chart:NumericalAxis.LabelStyle>
+                                </chart:NumericalAxis>
+                            </chart:SfCartesianChart.XAxes>
+
+                            <chart:SfCartesianChart.YAxes>
+                                <chart:NumericalAxis ShowMajorGridLines="true" Minimum="-1" Maximum="2">
+                                    <chart:NumericalAxis.Title>
+                                        <chart:ChartAxisTitle/>
+                                    </chart:NumericalAxis.Title>
+                                </chart:NumericalAxis>
+                            </chart:SfCartesianChart.YAxes>
+
+                            <chart:SfCartesianChart.Series>
+                                <chart:FastLineSeries ItemsSource="{Binding XAxisData}" 
+                                      EnableAntiAliasing="True"
+                                      XBindingPath="Time" YBindingPath="Value"
+                                      Label="X Axis" />
+                                <chart:FastLineSeries ItemsSource="{Binding YAxisData}" 
+                                      EnableAntiAliasing="True"
+                                      XBindingPath="Time" YBindingPath="Value"
+                                      Label="Y Axis" />
+                                <chart:FastLineSeries ItemsSource="{Binding ZAxisData}" 
+                                      EnableAntiAliasing="True"
+                                      XBindingPath="Time" YBindingPath="Value"
+                                      Label="Z Axis" />
+                            </chart:SfCartesianChart.Series>
+                        </chart:SfCartesianChart>
+
                     </VerticalStackLayout>
                 </mdc:Card>
+
 
                 <!-- Barometer Card -->
                 <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">

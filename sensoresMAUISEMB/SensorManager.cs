@@ -75,13 +75,11 @@ namespace sensoresMAUISEMB
             {
                 if (!Accelerometer.Default.IsMonitoring)
                 {
-                    // Ativa o acelerômetro para detecção de shake
                     Accelerometer.Default.ShakeDetected += Accelerometer_ShakeDetected;
                     Accelerometer.Default.Start(SensorSpeed.Game);
                 }
                 else
                 {
-                    // Desativa o acelerômetro
                     Accelerometer.Default.Stop();
                     Accelerometer.Default.ShakeDetected -= Accelerometer_ShakeDetected;
                 }

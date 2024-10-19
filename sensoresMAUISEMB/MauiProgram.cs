@@ -4,6 +4,7 @@ using OxyPlot.Maui.Skia;
 using SkiaSharp.Views.Maui.Controls;
 using SkiaSharp.Views.Maui.Controls.Compatibility;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace sensoresMAUISEMB
 {
@@ -16,6 +17,7 @@ namespace sensoresMAUISEMB
                 .UseMauiApp<App>()
                 .UseSkiaSharp()
                 .UseMaterialComponents() // material m3
+                .ConfigureSyncfusionCore()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
