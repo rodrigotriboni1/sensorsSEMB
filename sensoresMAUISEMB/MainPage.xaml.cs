@@ -7,8 +7,6 @@ namespace sensoresMAUISEMB
     {
         private SensorManager sensorManager;
         private SensorChartManager sensorChartManager;
-        private int maxPoints = 70;
-        private int timeCounter = 0;
         public MainPage()
         {
             InitializeComponent();
