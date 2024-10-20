@@ -9,6 +9,7 @@ namespace sensoresMAUISEMB
         Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel, ShakeLabel;
 
         public event Action<double, double, double> AccelerometerReadingChanged;
+        public event EventHandler<CompassChangedEventArgs> CompassReadingChanged;
 
         public SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel,
                              Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel)
@@ -143,17 +144,20 @@ namespace sensoresMAUISEMB
 
         private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
         {
-            Console.WriteLine($"Compass: Reading = {e.Reading}");
+            Console.WriteLine($"Compass: Reading = {e.Reading.HeadingMagneticNorth}");
             if (CompassLabel != null)
             {
                 CompassLabel.TextColor = Colors.Green;
-                CompassLabel.Text = $"{e.Reading:F2} degrees";
+                int roundedReading = (int)Math.Round(e.Reading.HeadingMagneticNorth); 
+                CompassLabel.Text = $"{roundedReading} degrees";
             }
             else
             {
                 Console.WriteLine("Compass: CompassLabel is null!");
             }
         }
+
+
 
 
 

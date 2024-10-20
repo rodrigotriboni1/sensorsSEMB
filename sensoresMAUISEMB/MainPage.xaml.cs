@@ -68,5 +68,9 @@ namespace sensoresMAUISEMB
         {
             sensorChart.IsVisible = !sensorChart.IsVisible;
         }
+        private void OnToggleGaugeClicked(object sender, EventArgs e)
+        {
+            compassGauge.IsVisible = !compassGauge.IsVisible;
+        }
     }
 }

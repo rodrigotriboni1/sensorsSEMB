@@ -1,9 +1,10 @@
 ﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:sensoresMAUISEMB"
              xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
              xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
              xmlns:icon="clr-namespace:IconPacks.IconKind;assembly=IconPacks.Material"
-             
+             xmlns:gauge="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
              x:Class="sensoresMAUISEMB.MainPage"
              Title="Sensor Dashboard">
 
@@ -14,18 +15,22 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+
+
         <!-- Scrollable Content -->
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="#F7F2F9">
+
                 <!-- Accelerometer Card -->
                 <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
                         <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide Graph" Clicked="OnToggleGraphClicked"/>
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide" Clicked="OnToggleGraphClicked"/>
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toggle On" Clicked="OnToggleAccelerometerClicked"/>
                         </HorizontalStackLayout>
+
                         <chart:SfCartesianChart x:Name="sensorChart" 
                                                 WidthRequest="300" 
                                                 HeightRequest="300" 
@@ -88,11 +93,98 @@
                 </mdc:Card>
 
                 <!-- Compass Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green" >
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
                     <VerticalStackLayout>
+                        <VerticalStackLayout.BindingContext>
+                            <local:RadialGaugeViewModel/>
+                        </VerticalStackLayout.BindingContext>
                         <Label Text="Compass" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="CompassLabel" Text="Not started" TextColor="Red" />
-                        <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toogle On" Clicked="OnToggleCompassClicked"/>
+                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide Compass" Clicked="OnToggleGaugeClicked"/>
+                            <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toggle On" Clicked="OnToggleCompassClicked"/>
+                        </HorizontalStackLayout>
+
+                        <gauge:SfRadialGauge x:Name="compassGauge" Rotation="{Binding RotationAngle}" BackgroundColor="Transparent" IsVisible="False">
+                            <gauge:SfRadialGauge.Axes>
+                                <gauge:RadialAxis ShowAxisLine="False"
+                                                TickPosition="Outside"
+                                                LabelPosition="Outside"
+                                                StartAngle="270" 
+                                                EndAngle="270"
+                                                CanRotateLabels="True"
+                                                RadiusFactor="0.6"
+                                                MinorTicksPerInterval="5"
+                                                Minimum="0"
+                                                Maximum="360"
+                                                ShowLastLabel="False"
+                                                Interval="30"
+                                                OffsetUnit="Factor"
+                                                BackgroundColor="Transparent">
+                                    <gauge:RadialAxis.MajorTickStyle>
+                                        <gauge:RadialTickStyle LengthUnit="Pixel"
+                                         StrokeThickness="2"
+                                         Length="15" />
+                                    </gauge:RadialAxis.MajorTickStyle>
+                                    <gauge:RadialAxis.MinorTickStyle>
+                                        <gauge:RadialTickStyle LengthUnit="Pixel"
+                                         Length="10" />
+                                    </gauge:RadialAxis.MinorTickStyle>
+                                    <gauge:RadialAxis.Pointers>
+                                        <gauge:ShapePointer Value="{Binding Reading}" Offset="-100" OffsetUnit="Pixel"
+                                      ShapeType="InvertedTriangle" />
+                                        <gauge:NeedlePointer Value="0"
+                                                           NeedleLengthUnit="Factor"
+                                                           NeedleLength="0.3"
+                                                           NeedleStartWidth="1"
+                                                           NeedleEndWidth="1"
+                                                           NeedleFill="#FFC4C4C4"
+                                                           KnobRadius="0"
+                                                           TailLengthUnit="Factor"
+                                                           TailLength="0.3"
+                                                           TailWidth="1"
+                                                           TailFill="#FFC4C4C4">
+                                        </gauge:NeedlePointer>
+                                        <gauge:NeedlePointer Value="270"
+                                                       NeedleLengthUnit="Factor"
+                                                       NeedleLength="0.3"
+                                                       NeedleStartWidth="1"
+                                                       NeedleEndWidth="1"
+                                                       NeedleFill="#FFC4C4C4"
+                                                       KnobRadius="0"
+                                                       TailLengthUnit="Factor"
+                                                       TailLength="0.3"
+                                                       TailWidth="1"
+                                                       TailFill="#FFC4C4C4">
+                                        </gauge:NeedlePointer>
+                                    </gauge:RadialAxis.Pointers>
+
+                                    <gauge:RadialAxis.Annotations>
+                                        <gauge:GaugeAnnotation DirectionUnit="AxisValue" DirectionValue="270" PositionFactor="0.6">
+                                            <gauge:GaugeAnnotation.Content>
+                                                <Label Text="W" FontAttributes="Bold"  FontSize="20" TextColor="Black" />
+                                            </gauge:GaugeAnnotation.Content>
+                                        </gauge:GaugeAnnotation>
+                                        <gauge:GaugeAnnotation DirectionUnit="AxisValue" DirectionValue="0" PositionFactor="0.6">
+                                            <gauge:GaugeAnnotation.Content>
+                                                <Label Text="N" FontAttributes="Bold" FontSize="20" TextColor="Black" />
+                                            </gauge:GaugeAnnotation.Content>
+                                        </gauge:GaugeAnnotation>
+                                        <gauge:GaugeAnnotation DirectionUnit="AxisValue" DirectionValue="90" PositionFactor="0.6">
+                                            <gauge:GaugeAnnotation.Content>
+                                                <Label Text="E" FontAttributes="Bold" FontSize="20" TextColor="Black" />
+                                            </gauge:GaugeAnnotation.Content>
+                                        </gauge:GaugeAnnotation>
+                                        <gauge:GaugeAnnotation DirectionUnit="AxisValue" DirectionValue="180" PositionFactor="0.6">
+                                            <gauge:GaugeAnnotation.Content>
+                                                <Label Text="S"  FontAttributes="Bold" FontSize="20" TextColor="Black" />
+                                            </gauge:GaugeAnnotation.Content>
+                                        </gauge:GaugeAnnotation>
+                                    </gauge:RadialAxis.Annotations>
+                                </gauge:RadialAxis>
+                            </gauge:SfRadialGauge.Axes>
+                        </gauge:SfRadialGauge>
+
                     </VerticalStackLayout>
                 </mdc:Card>
                 <!-- Gyroscope Card -->
@@ -124,8 +216,8 @@
 
             </VerticalStackLayout>
         </ScrollView>
-        
-        
+
+
     </Grid>
 
 </ContentPage>
