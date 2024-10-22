@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -44,8 +45,10 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<SensorDbContext>();
-        if (context.Database.GetPendingMigrations().Any())
+        var contextUser = services.GetRequiredService<UserDbContext>();
+        if (context.Database.GetPendingMigrations().Any() || contextUser.Database.GetPendingMigrations().Any())
         {
+            contextUser.Database.Migrate();
             context.Database.Migrate(); // Apply any pending migrations
         }
         // You can add database seeding here if needed.
