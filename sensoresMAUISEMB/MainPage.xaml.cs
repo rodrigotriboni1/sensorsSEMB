@@ -5,8 +5,8 @@ namespace sensoresMAUISEMB
 {
     public partial class MainPage : ContentPage
     {
-        private SensorManager sensorManager;
-        private SensorChartManager sensorChartManager;
+        readonly private SensorManager sensorManager;
+        readonly private SensorChartManager sensorChartManager;
         public MainPage()
         {
             InitializeComponent();

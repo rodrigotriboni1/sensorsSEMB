@@ -8,14 +8,14 @@ namespace sensoresMAUISEMB
         public ObservableCollection<ChartDataPoint> XAxisData { get; set; }
         public ObservableCollection<ChartDataPoint> YAxisData { get; set; }
         public ObservableCollection<ChartDataPoint> ZAxisData { get; set; }
-        private int maxPoints = 70;
+        readonly private int maxPoints = 70;
         private int timeCounter = 0;
 
         public SensorChartManager(SfCartesianChart sensorChart)
         {
-            XAxisData = new ObservableCollection<ChartDataPoint>();
-            YAxisData = new ObservableCollection<ChartDataPoint>();
-            ZAxisData = new ObservableCollection<ChartDataPoint>();
+            XAxisData = [];
+            YAxisData = [];
+            ZAxisData = [];
 
             // Configure the chart series
             sensorChart.Series[0].ItemsSource = XAxisData;
@@ -36,15 +36,9 @@ namespace sensoresMAUISEMB
             if (ZAxisData.Count > maxPoints) ZAxisData.RemoveAt(0);
         }
     }
-    public class ChartDataPoint
+    public class ChartDataPoint(int time, double value)
     {
-        public int Time { get; set; }
-        public double Value { get; set; }
-
-        public ChartDataPoint(int time, double value)
-        {
-            Time = time;
-            Value = value;
-        }
+        public int Time { get; set; } = time;
+        public double Value { get; set; } = value;
     }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace sensoresMAUISEMB
 {
-    public interface ICPUInfo
+    public interface ICPUInfoService
     {
-        Task<string> GetCPUInfoAsync();
+        string GetCPUInfo();
     }
 }

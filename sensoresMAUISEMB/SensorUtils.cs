@@ -39,8 +39,7 @@ namespace sensoresMAUISEMB
             var formattedValues = new List<string>();
 
             // Nomeia os eixos conforme o número de valores (X, Y, Z, W)
-            string[] axisLabels = { "X", "Y", "Z", "W" };
-
+            var axisLabels = new[] { "X", "Y", "Z", "W" };
             for (int i = 0; i < values.Length && i < axisLabels.Length; i++)
             {
                 formattedValues.Add($"{axisLabels[i]}: {values[i].ToString(format)}");
@@ -51,11 +50,9 @@ namespace sensoresMAUISEMB
 
         public static async Task ShowSensorNotSupportedMessage(string sensorName)
         {
-            string message = $"{sensorName} não é compatível com o celular.";
-
-            // Exibe a mensagem no AlertBox
-            await App.Current.MainPage.DisplayAlert("Sensor não suportado", message, "OK");
+            await Application.Current.MainPage.DisplayAlert("Sensor Not Supported", $"{sensorName} is not supported on this device.", "OK");
         }
+
     }
 
 }

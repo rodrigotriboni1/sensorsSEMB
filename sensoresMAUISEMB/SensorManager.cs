@@ -1,26 +1,102 @@
 ﻿using SkiaSharp;
 using System.Collections.Generic;
+using System.Net.Http.Json;
+using System.Text.Json;
+using System.Text;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 
 
 namespace sensoresMAUISEMB
 {
-    class SensorManager
+    internal class SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel,
+                         Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel)
     {
-        Label AccelLabel, BarometerLabel, CompassLabel, GyroscopeLabel, MagnetometerLabel, OrientationLabel, ShakeLabel;
+        readonly Label AccelLabel = accelLabel, BarometerLabel = barometerLabel, CompassLabel = compassLabel, GyroscopeLabel = gyroscopeLabel, MagnetometerLabel = magnetometerLabel, OrientationLabel = orientationLabel;
 
-        public event Action<double, double, double> AccelerometerReadingChanged;
-        public event EventHandler<CompassChangedEventArgs> CompassReadingChanged;
+        public event Action<double, double, double>? AccelerometerReadingChanged;
+       // public event EventHandler<CompassChangedEventArgs>? CompassReadingChanged;
 
-        public SensorManager(Label accelLabel, Label barometerLabel, Label compassLabel,
-                             Label gyroscopeLabel, Label magnetometerLabel, Label orientationLabel)
+        private static readonly HttpClient _httpClient = new HttpClient();
+        private const string ApiUrl = "http://192.168.100.28:5202/api/SensorData"; // API route
+
+        private SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
         {
-            AccelLabel = accelLabel;
-            BarometerLabel = barometerLabel;
-            CompassLabel = compassLabel;
-            GyroscopeLabel = gyroscopeLabel;
-            MagnetometerLabel = magnetometerLabel;
-            OrientationLabel = orientationLabel;
+            return new SensorData
+            {
+                SensorName = sensorName,
+                SensorType = sensorType,
+                ValueX = valueX,
+                ValueY = valueY,
+                ValueZ = valueZ,
+                Timestamp = DateTime.UtcNow // Or DateTime.Now if you prefer local time
+            };
         }
+        private bool IsNetworkAvailable()
+        {
+
+            return true;
+        }
+        public async Task SendSensorDataAsync(SensorData sensorData)
+        {
+            try
+            {
+                // Check if the Android device/emulator is connected to the internet
+                if (!IsNetworkAvailable())
+                {
+                    Console.WriteLine("Network is unavailable. Please check your connection.");
+                    return;
+                }
+
+                // Serialize the sensor data to JSON
+                var json = JsonSerializer.Serialize(sensorData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // Send the HTTP POST request
+                var response = await _httpClient.PostAsync(ApiUrl, content);
+
+                // Handle the response
+                if (response.IsSuccessStatusCode)
+                {
+                    var returnedData = await response.Content.ReadFromJsonAsync<SensorData>();
+                    if (returnedData != null)
+                    {
+                        sensorData.Id = returnedData.Id; // Update the ID
+                        Console.WriteLine($"Data sent successfully! ID: {sensorData.Id}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Response was successful, but no ID returned.");
+                    }
+                }
+                else
+                {
+                    // Capture the error content and status code
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error: {response.StatusCode} - {errorContent}");
+
+
+                    // You could also log the error to an external logging service if needed.
+                }
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Error: {httpEx.Message}");
+            }
+            catch (TaskCanceledException ex)
+            {
+                if (!IsNetworkAvailable())
+                {
+                    Console.WriteLine("Request was canceled due to a network issue. Please check your connection.");
+                }
+         
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
+            }
+        }
+
+
         public void ToggleAccelerometer()
         {
             if (Accelerometer.Default.IsSupported)
@@ -40,11 +116,14 @@ namespace sensoresMAUISEMB
             }
             else
             {
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Acelerômetro"));
+
                 Console.WriteLine("Acelerômetro: Não Suportado");
+
             }
         }
 
-        private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
+        private async void Accelerometer_ReadingChanged(object? sender, AccelerometerChangedEventArgs e)
         {
             var data = e.Reading;
             double x = data.Acceleration.X;
@@ -53,6 +132,10 @@ namespace sensoresMAUISEMB
 
             AccelLabel.Text = $"X: {x:F4}, Y: {y:F4}, Z: {z:F4}";
             AccelLabel.TextColor = Colors.Green;
+            
+            var sensorData = CreateSensorData("Accelerometer", "Motion", x, y, z);
+            Console.WriteLine(sensorData);
+            await SendSensorDataAsync(sensorData); 
 
             AccelerometerReadingChanged?.Invoke(x, y, z);
         }
@@ -71,13 +154,15 @@ namespace sensoresMAUISEMB
                     Accelerometer.Default.ShakeDetected -= Accelerometer_ShakeDetected;
                 }
             }
+            else
+            {
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Acelerômetro"));
+                Console.WriteLine("Acelerômetro: Not Supported");
+            }
         }
 
-        private void Accelerometer_ShakeDetected(object sender, EventArgs e)
+        private void Accelerometer_ShakeDetected(object? sender, EventArgs e)
         {
-            // Atualiza o UI Label com uma mensagem de "shake detected", em uma cor aleatória
-            ShakeLabel.TextColor = new Color(Random.Shared.Next(256), Random.Shared.Next(256), Random.Shared.Next(256));
-            ShakeLabel.Text = $"Shake detected";
         }
 
         public void ToggleBarometer()
@@ -99,12 +184,12 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Barômetro");
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Barômetro"));
                 Console.WriteLine("Barometer: Not Supported");
             }
         }
 
-        private void Barometer_ReadingChanged(object sender, BarometerChangedEventArgs e)
+        private void Barometer_ReadingChanged(object? sender, BarometerChangedEventArgs e)
         {
             Console.WriteLine($"Barometer: Reading = {e.Reading}");
             if (BarometerLabel != null)
@@ -137,12 +222,12 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Compass");
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Compass"));
                 Console.WriteLine("Compass: Not Supported");
             }
         }
 
-        private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
+        private void Compass_ReadingChanged(object? sender, CompassChangedEventArgs e)
         {
             Console.WriteLine($"Compass: Reading = {e.Reading.HeadingMagneticNorth}");
             if (CompassLabel != null)
@@ -180,12 +265,12 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Giroscópio");
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Giroscópio"));
                 Console.WriteLine("Gyroscope: Not Supported");
             }
         }
 
-        private void Gyroscope_ReadingChanged(object sender, GyroscopeChangedEventArgs e)
+        private void Gyroscope_ReadingChanged(object? sender, GyroscopeChangedEventArgs e)
         {
             Console.WriteLine($"Gyroscope: Reading = {e.Reading}");
 
@@ -215,17 +300,16 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Magnetômetro");
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Magnetômetro"));
                 Console.WriteLine("Magnetometer: Not Supported");
             }
         }
 
-        private void Magnetometer_ReadingChanged(object sender, MagnetometerChangedEventArgs e)
+        private void Magnetometer_ReadingChanged(object? sender, MagnetometerChangedEventArgs e)
         {
             Console.WriteLine($"Magnetometer: Reading = {e.Reading}");
 
             var reading = e.Reading;
-            // Usa UpdateSensorLabel para lidar com os três componentes do magnetômetro (X, Y, Z)
             SensorUtils.UpdateSensorLabel(MagnetometerLabel, "µT", reading.MagneticField.X, reading.MagneticField.Y, reading.MagneticField.Z);
         }
 
@@ -249,12 +333,12 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                SensorUtils.ShowSensorNotSupportedMessage("Sensor de Orientação");
+                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Sensor de Orientação"));
                 Console.WriteLine("Orientation: Not Supported");
             }
         }
 
-        private void Orientation_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
+        private void Orientation_ReadingChanged(object? sender, OrientationSensorChangedEventArgs e)
         {
             Console.WriteLine($"Orientation: Reading = {e.Reading}");
 

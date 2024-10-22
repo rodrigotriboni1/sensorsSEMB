@@ -1,4 +1,4 @@
-namespace localhostSensoresMaui
+namespace sensores_data
 {
     public class WeatherForecast
     {

@@ -1,0 +1,6 @@
+@sensores_data_HostAddress = http://localhost:5103
+
+GET {{sensores_data_HostAddress}}/sensorservice/
+Accept: application/json
+
+###

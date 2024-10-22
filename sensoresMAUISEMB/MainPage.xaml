@@ -26,6 +26,7 @@
                     <VerticalStackLayout>
                         <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
+
                         <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide" Clicked="OnToggleGraphClicked"/>
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toggle On" Clicked="OnToggleAccelerometerClicked"/>
@@ -104,6 +105,7 @@
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Show/Hide Compass" Clicked="OnToggleGaugeClicked"/>
                             <mdc:Button Style="{DynamicResource ElevatedButtonStyle}" Text="Toggle On" Clicked="OnToggleCompassClicked"/>
                         </HorizontalStackLayout>
+
 
                         <gauge:SfRadialGauge x:Name="compassGauge" Rotation="{Binding RotationAngle}" BackgroundColor="Transparent" IsVisible="False">
                             <gauge:SfRadialGauge.Axes>

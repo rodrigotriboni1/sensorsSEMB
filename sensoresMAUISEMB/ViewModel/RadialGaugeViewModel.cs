@@ -55,7 +55,7 @@ namespace sensoresMAUISEMB
             }
         }
       
-        private void OnCompassReadingChanged(object sender, CompassChangedEventArgs e)
+        private void OnCompassReadingChanged(object? sender, CompassChangedEventArgs e)
         {
             this.Reading = e.Reading.HeadingMagneticNorth;
             var degree = (int)this.Reading;
