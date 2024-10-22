@@ -17,7 +17,6 @@ namespace sensoresMAUISEMB
             {
                 label.TextColor = Colors.Green;
 
-                // Formata a leitura com base na quantidade de valores
                 if (readings.Length == 1)
                 {
                     label.Text = FormatSensorReading(2, readings[0]) + $" {unit}";

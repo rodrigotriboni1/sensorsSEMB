@@ -12,10 +12,10 @@ namespace sensoresMAUISEMB
         [JsonPropertyName("id")]
         public int Id { get; set; }  // Add the Id property!
         [JsonPropertyName("SensorName")]
-        public string SensorName { get; set; }
+        public required string SensorName { get; set; }
 
         [JsonPropertyName("SensorType")]
-        public string SensorType { get; set; }
+        public required string SensorType { get; set; }
 
         [JsonPropertyName("ValueX")]
         public double ValueX { get; set; }

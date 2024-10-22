@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<SensorDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString(name: "SensorDbConnection")));
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseMySQL(builder.Configuration.GetConnectionString(name: "SensorDbConnection")));
 
 builder.Services.AddControllers();
 

@@ -25,16 +25,6 @@ namespace sensoresMAUISEMB
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            var apiUrl = "http://192.168.56.1:5257/api/sensors";
-
-            // Register HttpClient
-            builder.Services.AddHttpClient("api", httpClient =>
-            {
-                httpClient.BaseAddress = new Uri(apiUrl);
-            });
-
-            builder.Services.AddSingleton<SensorManager>();
-
 #if DEBUG
             // Adiciona logging para debug no ambiente de desenvolvimento
             builder.Logging.AddDebug();

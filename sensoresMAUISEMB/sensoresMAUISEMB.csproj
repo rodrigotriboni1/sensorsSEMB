@@ -58,6 +58,7 @@
 
 	<ItemGroup>
 	  <Compile Remove="Class1.cs" />
+	  <Compile Remove="ICPUInfoService.cs" />
 	  <Compile Remove="NewPage1.xaml.cs" />
 	  <Compile Remove="View1.xaml.cs" />
 	</ItemGroup>

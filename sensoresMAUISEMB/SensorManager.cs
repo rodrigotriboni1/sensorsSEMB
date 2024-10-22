@@ -19,7 +19,7 @@ namespace sensoresMAUISEMB
         private static readonly HttpClient _httpClient = new HttpClient();
         private const string ApiUrl = "http://192.168.100.28:5202/api/SensorData"; // API route
 
-        private SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
+        private static SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
         {
             return new SensorData
             {
@@ -31,22 +31,10 @@ namespace sensoresMAUISEMB
                 Timestamp = DateTime.UtcNow // Or DateTime.Now if you prefer local time
             };
         }
-        private bool IsNetworkAvailable()
-        {
-
-            return true;
-        }
-        public async Task SendSensorDataAsync(SensorData sensorData)
+        public static async Task SendSensorDataAsync(SensorData sensorData)
         {
             try
             {
-                // Check if the Android device/emulator is connected to the internet
-                if (!IsNetworkAvailable())
-                {
-                    Console.WriteLine("Network is unavailable. Please check your connection.");
-                    return;
-                }
-
                 // Serialize the sensor data to JSON
                 var json = JsonSerializer.Serialize(sensorData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -81,14 +69,6 @@ namespace sensoresMAUISEMB
             catch (HttpRequestException httpEx)
             {
                 Console.WriteLine($"HTTP Error: {httpEx.Message}");
-            }
-            catch (TaskCanceledException ex)
-            {
-                if (!IsNetworkAvailable())
-                {
-                    Console.WriteLine("Request was canceled due to a network issue. Please check your connection.");
-                }
-         
             }
             catch (Exception ex)
             {
