@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
 using Microsoft.Maui.Controls.PlatformConfiguration;
+using sensoresMAUISEMB.Models;
 
 
 namespace sensoresMAUISEMB
@@ -48,7 +49,7 @@ namespace sensoresMAUISEMB
                     var returnedData = await response.Content.ReadFromJsonAsync<SensorData>();
                     if (returnedData != null)
                     {
-                        sensorData.Id = returnedData.Id; // Update the ID
+                        sensorData.Id = returnedData.Id;
                         Console.WriteLine($"Data sent successfully! ID: {sensorData.Id}");
                     }
                     else
@@ -62,8 +63,6 @@ namespace sensoresMAUISEMB
                     var errorContent = await response.Content.ReadAsStringAsync();
                     Console.WriteLine($"Error: {response.StatusCode} - {errorContent}");
 
-
-                    // You could also log the error to an external logging service if needed.
                 }
             }
             catch (HttpRequestException httpEx)

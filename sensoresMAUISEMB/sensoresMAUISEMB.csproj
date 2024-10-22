@@ -59,7 +59,9 @@
 	<ItemGroup>
 	  <Compile Remove="Class1.cs" />
 	  <Compile Remove="ICPUInfoService.cs" />
+	  <Compile Remove="LoginPage.xaml.cs" />
 	  <Compile Remove="NewPage1.xaml.cs" />
+	  <Compile Remove="RegisterPage.xaml.cs" />
 	  <Compile Remove="View1.xaml.cs" />
 	</ItemGroup>
 
@@ -69,7 +71,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Remove="LoginPage.xaml" />
 	  <MauiXaml Remove="NewPage1.xaml" />
+	  <MauiXaml Remove="RegisterPage.xaml" />
 	  <MauiXaml Remove="View1.xaml" />
 	</ItemGroup>
 

@@ -25,6 +25,12 @@ namespace sensoresMAUISEMB
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            builder.Services.AddSingleton<HttpClient>(sp =>
+            {
+                return new HttpClient { BaseAddress = new Uri("http://192.168.100.28:5202") };
+            });
+
 #if DEBUG
             // Adiciona logging para debug no ambiente de desenvolvimento
             builder.Logging.AddDebug();
