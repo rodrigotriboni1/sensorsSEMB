@@ -3,11 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="sensoresMAUISEMB.Performance"
              Title="Performance">
-    <StackLayout Padding="20">
-        <Label x:Name="cpuInfoLabel" 
-               Text="Loading CPU Info..." 
-               FontSize="Medium"
-               HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand" />
-    </StackLayout>
+    <VerticalStackLayout>
+        <Label x:Name="cpuUsageLabel" Text="CPU Usage: " />
+        <Label x:Name="coreCountLabel" Text="Cores: " />
+        <Label x:Name="cpuFrequencyLabel" Text="Frequency: " />
+    </VerticalStackLayout>
 </ContentPage>
