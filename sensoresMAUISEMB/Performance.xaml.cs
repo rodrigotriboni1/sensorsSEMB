@@ -1,20 +1,28 @@
-using Microsoft.Maui;
-using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
+using sensoresMAUISEMB.Models;
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace sensoresMAUISEMB
 {
+
     public partial class Performance : ContentPage
     {
+        public ObservableCollection<CPUUsageData> CPUUsageData { get; set; }
+
+        public ObservableCollection<CoreInfo> CoresList { get; set; }
+
         public Performance()
         {
             InitializeComponent();
+            CoresList = new ObservableCollection<CoreInfo>();
+            CPUUsageData = new ObservableCollection<CPUUsageData>();
+            BindingContext = this;
             GetCPUInfo();
-            StartCPUUsageUpdates();
+            StartCPUUsageAndFrequencyUpdates();
         }
 
         private void GetCPUInfo()
@@ -25,73 +33,101 @@ namespace sensoresMAUISEMB
                 Java.Lang.Runtime runtime = Java.Lang.Runtime.GetRuntime();
                 int coreCount = runtime.AvailableProcessors();
                 coreCountLabel.Text = $"Cores: {coreCount}";
-
-                string cpuFrequencies = string.Empty;
-
-                for (int i = 0; i < coreCount; i++)
-                {
-                    string path = $"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq";
-                    if (System.IO.File.Exists(path))
-                    {
-                        try
-                        {
-                            // Read the frequency in kHz
-                            string freqStr = System.IO.File.ReadAllText(path).Trim();
-                            long freqKHz = long.Parse(freqStr);
-
-                            // Convert to MHz
-                            double freqMHz = freqKHz / 1000.0;
-                            cpuFrequencies += $"Core {i}: {freqMHz} MHz\n";
-                        }
-                        catch (Exception ex)
-                        {
-                            cpuFrequencies += $"Core {i}: Error reading frequency - {ex.Message}\n";
-                            Debug.WriteLine($"Error reading frequency for core {i}: {ex}");
-                        }
-                    }
-                    else
-                    {
-                        cpuFrequencies += $"Core {i}: Frequency info not available\n";
-                    }
-                }
-
-                cpuFrequencyLabel.Text = cpuFrequencies;
             }
             catch (Exception ex)
             {
                 coreCountLabel.Text = $"Cores: Error - {ex.Message}";
-                cpuFrequencyLabel.Text = $"Frequency: Error - {ex.Message}";
                 Debug.WriteLine($"Error getting CPU info: {ex}");
             }
 #else
-    coreCountLabel.Text = "Cores: Not Supported on this platform";
-    cpuFrequencyLabel.Text = "Frequency: Not Supported on this platform";
+            coreCountLabel.Text = "Cores: Not Supported on this platform";
 #endif
         }
 
-
-        private async void StartCPUUsageUpdates()
+        private async void StartCPUUsageAndFrequencyUpdates()
         {
+            int timeCounter = 0; // To track the time for the chart
             while (true)
             {
                 try
                 {
 #if ANDROID
-                    cpuUsageLabel.Text = $"CPU Usage: {await GetCPUUsageAsync()}%";
+                    // Get CPU Usage
+                    double cpuUsage = await GetCPUUsageAsync();
+                    cpuUsageLabel.Text = $"CPU Usage: {cpuUsage}%";
+
+                    // Add data to the chart
+                    CPUUsageData.Add(new CPUUsageData { Time = timeCounter++, Usage = cpuUsage });
+
+                    // Get CPU Frequencies
+                    await GetCPUFrequenciesAsync();
 #else
-                    cpuUsageLabel.Text = "CPU Usage: Not Supported on this platform";
+                cpuUsageLabel.Text = "CPU Usage: Not Supported on this platform";
 #endif
                 }
                 catch (Exception ex)
                 {
                     cpuUsageLabel.Text = $"CPU Usage: Error - {ex.Message}";
-                    Debug.WriteLine($"Error getting CPU usage: {ex}");
+                    Debug.WriteLine($"Error getting CPU usage or frequencies: {ex}");
                 }
-                await Task.Delay(1000);
+                await Task.Delay(100); // Update milisecond
             }
         }
 
+        private async Task GetCPUFrequenciesAsync()
+        {
+#if ANDROID
+            try
+            {
+                Java.Lang.Runtime runtime = Java.Lang.Runtime.GetRuntime();
+                int coreCount = runtime.AvailableProcessors();
+                CoresList.Clear();
 
+                for (int i = 0; i < coreCount; i++)
+                {
+                    string path = $"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq";
+                    if (File.Exists(path))
+                    {
+                        try
+                        {
+                            // Read the frequency in kHz
+                            string freqStr = await File.ReadAllTextAsync(path);
+                            long freqKHz = long.Parse(freqStr.Trim());
+
+                            // Convert to MHz
+                            double freqMHz = freqKHz / 1000.0;
+                            CoresList.Add(new CoreInfo
+                            {
+                                CoreName = $"Core {i}",
+                                Frequency = $"{freqMHz} MHz"
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            CoresList.Add(new CoreInfo
+                            {
+                                CoreName = $"Core {i}",
+                                Frequency = $"Error reading frequency - {ex.Message}"
+                            });
+                            Debug.WriteLine($"Error reading frequency for core {i}: {ex}");
+                        }
+                    }
+                    else
+                    {
+                        CoresList.Add(new CoreInfo
+                        {
+                            CoreName = $"Core {i}",
+                            Frequency = "Frequency info not available"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error getting CPU frequencies: {ex}");
+            }
+#endif
+        }
 
         private async Task<double> GetCPUUsageAsync()
         {
@@ -106,18 +142,15 @@ namespace sensoresMAUISEMB
                 long endIdle = getDeviceIdleTime();
                 long endTotal = getDeviceUptime();
 
-
                 double idleTime = endIdle - startIdle;
                 double totalTime = endTotal - startTotal;
                 double cpuUsage = (1.0 - (idleTime / totalTime)) * 100;
 
                 return Math.Round(cpuUsage, 2);
-
             }
             catch (Exception ex)
             {
-
-                Debug.WriteLine($"Error getting CPU Usage: {ex}");
+                Debug.WriteLine($"Error getting CPU usage: {ex}");
                 return 0;
             }
 #else
@@ -125,18 +158,14 @@ namespace sensoresMAUISEMB
 #endif
         }
 
-
 #if ANDROID
-
         private long getDeviceUptime()
         {
             return Android.OS.SystemClock.ElapsedRealtime();
         }
 
-
         private long getDeviceIdleTime()
         {
-
             return Android.OS.SystemClock.CurrentThreadTimeMillis();
         }
 #endif

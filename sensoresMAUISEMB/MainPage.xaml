@@ -15,8 +15,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-
-
         <!-- Scrollable Content -->
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="#F7F2F9">

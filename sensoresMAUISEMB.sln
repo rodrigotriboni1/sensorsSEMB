@@ -5,7 +5,9 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sensoresMAUISEMB", "sensoresMAUISEMB\sensoresMAUISEMB.csproj", "{D7C3D1CE-713B-4663-B458-798D1D4D9BBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sensores_data", "sensores_data\sensores_data.csproj", "{F9684508-51F4-496E-A44B-C23D5C4567A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sensores_data", "sensores_data\sensores_data.csproj", "{F9684508-51F4-496E-A44B-C23D5C4567A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sensores_web", "sensores_web\sensores_web.csproj", "{447A145D-3DEF-4D9B-8C27-5BC0D659A9DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{F9684508-51F4-496E-A44B-C23D5C4567A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9684508-51F4-496E-A44B-C23D5C4567A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9684508-51F4-496E-A44B-C23D5C4567A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{447A145D-3DEF-4D9B-8C27-5BC0D659A9DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{447A145D-3DEF-4D9B-8C27-5BC0D659A9DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{447A145D-3DEF-4D9B-8C27-5BC0D659A9DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{447A145D-3DEF-4D9B-8C27-5BC0D659A9DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

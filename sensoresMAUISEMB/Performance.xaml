@@ -1,11 +1,75 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="sensoresMAUISEMB.Performance"
-             Title="Performance">
-    <VerticalStackLayout>
-        <Label x:Name="cpuUsageLabel" Text="CPU Usage: " />
-        <Label x:Name="coreCountLabel" Text="Cores: " />
-        <Label x:Name="cpuFrequencyLabel" Text="Frequency: " />
-    </VerticalStackLayout>
+             xmlns:syncfusion="http://schemas.syncfusion.com/winfx/2006/xaml"
+             xmlns:chart="clr-namespace:Syncfusion.Maui.Charts;assembly=Syncfusion.Maui.Charts"
+             xmlns:mdc="clr-namespace:Material.Components.Maui;assembly=Material.Components.Maui"
+             x:Class="sensoresMAUISEMB.Performance">
+    <StackLayout Padding="10" BackgroundColor="#F7F2F9">
+        <!-- Card for Core Count and CPU Usage -->
+        <mdc:Card Padding="10" Margin="5" BackgroundColor="#E7E0EC">
+            <StackLayout>
+                <Label x:Name="coreCountLabel" FontSize="24" HorizontalOptions="Center" />
+                <Label x:Name="cpuUsageLabel" FontSize="24" HorizontalOptions="Center" />
+            </StackLayout>
+        </mdc:Card>
+
+        <!-- Syncfusion Chart for CPU Usage -->
+        <chart:SfCartesianChart x:Name="cpuUsageChart" 
+                                 WidthRequest="300" 
+                                 HeightRequest="300" 
+                                 HorizontalOptions="Center" 
+                                 VerticalOptions="Center">
+
+            <chart:SfCartesianChart.Title>
+                <Label Text="CPU Usage Over Time" 
+                       Margin="0,0,0,5" 
+                       HorizontalOptions="Fill" 
+                       HorizontalTextAlignment="Center" 
+                       VerticalOptions="Center" 
+                       FontSize="16"/>
+            </chart:SfCartesianChart.Title>
+
+            <chart:SfCartesianChart.XAxes>
+                <chart:NumericalAxis ShowMajorGridLines="false" EdgeLabelsDrawingMode="Center">
+                    <chart:NumericalAxis.Title>
+                        <chart:ChartAxisTitle Text="Time (s)"/>
+                    </chart:NumericalAxis.Title>
+                    <chart:NumericalAxis.LabelStyle>
+                        <chart:ChartAxisLabelStyle/>
+                    </chart:NumericalAxis.LabelStyle>
+                </chart:NumericalAxis>
+            </chart:SfCartesianChart.XAxes>
+
+            <chart:SfCartesianChart.YAxes>
+                <chart:NumericalAxis ShowMajorGridLines="true" Minimum="0" Maximum="100">
+                    <chart:NumericalAxis.Title>
+                        <chart:ChartAxisTitle/>
+                    </chart:NumericalAxis.Title>
+                </chart:NumericalAxis>
+            </chart:SfCartesianChart.YAxes>
+
+            <chart:SfCartesianChart.Series>
+                <chart:FastLineSeries ItemsSource="{Binding CPUUsageData}" 
+                                     EnableAntiAliasing="True"
+                                     XBindingPath="Time" 
+                                     YBindingPath="Usage"
+                                     Label="CPU Usage" />
+            </chart:SfCartesianChart.Series>
+        </chart:SfCartesianChart>
+
+        <!-- CollectionView for CPU Cores -->
+        <CollectionView ItemsSource="{Binding CoresList}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BackgroundColor="#F7F2F9" CornerRadius="5">
+                        <StackLayout Orientation="Vertical" HorizontalOptions="Center">
+                            <Label Text="{Binding CoreName}" FontSize="14" FontAttributes="Bold" HorizontalOptions="Center"/>
+                            <Label Text="{Binding Frequency}" FontSize="16" HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
 </ContentPage>
