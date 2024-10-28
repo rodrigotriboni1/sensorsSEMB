@@ -18,7 +18,7 @@ namespace sensoresMAUISEMB
        // public event EventHandler<CompassChangedEventArgs>? CompassReadingChanged;
 
         private static readonly HttpClient _httpClient = new HttpClient();
-        private const string ApiUrl = "http://192.168.100.28:5202/api/SensorData"; // API route
+        private const string ApiUrl = "http://192.168.100.34:5202/api/SensorData"; // API route
 
         private static SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
         {
@@ -95,7 +95,7 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Acelerômetro"));
+                SensorUtils.ShowSensorNotSupportedMessage("Acelerômetro");
 
                 Console.WriteLine("Acelerômetro: Não Suportado");
 
@@ -135,7 +135,6 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Acelerômetro"));
                 Console.WriteLine("Acelerômetro: Not Supported");
             }
         }
@@ -163,7 +162,7 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Barômetro"));
+                SensorUtils.ShowSensorNotSupportedMessage("Barômetro");
                 Console.WriteLine("Barometer: Not Supported");
             }
         }
@@ -201,7 +200,8 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Compass"));
+                SensorUtils.ShowSensorNotSupportedMessage("Compasso");
+
                 Console.WriteLine("Compass: Not Supported");
             }
         }
@@ -244,7 +244,7 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Giroscópio"));
+                SensorUtils.ShowSensorNotSupportedMessage("Giroscópio");
                 Console.WriteLine("Gyroscope: Not Supported");
             }
         }
@@ -279,7 +279,8 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Magnetômetro"));
+                SensorUtils.ShowSensorNotSupportedMessage("Magnetômetro");
+
                 Console.WriteLine("Magnetometer: Not Supported");
             }
         }
@@ -312,7 +313,8 @@ namespace sensoresMAUISEMB
             }
             else
             {
-                Task.Run(async () => await SensorUtils.ShowSensorNotSupportedMessage("Sensor de Orientação"));
+                SensorUtils.ShowSensorNotSupportedMessage("Sensor de Orientação");
+
                 Console.WriteLine("Orientation: Not Supported");
             }
         }

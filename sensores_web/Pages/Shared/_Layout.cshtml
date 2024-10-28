@@ -11,28 +11,30 @@
     <!-- Syncfusion ASP.NET Core controls styles -->
     <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/27.1.48/fluent.css" />
     <script src="https://cdn.syncfusion.com/ej2/27.1.48/dist/ej2.min.js"></script>
+    <link href="https://cdn.syncfusion.com/ej2/20.2.36/ej2.material.css" rel="stylesheet" />
+
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">sensores_web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+        <ejs-appbar id="defaultAppBar">
+            <e-content-template>
+                <a href="https://github.com/rodrigotriboni1/sensorsSEMB.git" target="_blank" rel="noopener" role="link" aria-label="Syncfusion core controls">
+                    <div class="syncfusion-logo"></div>
+                </a>
+                <div class="e-appbar-spacer"></div>
+                <ejs-button id="defaultGitHubLink" isPrimary=true content="GITHUB"></ejs-button>
+            </e-content-template>
+        </ejs-appbar>
+
+        <style>
+            #defaultAppBar .syncfusion-logo {
+                background: url(https://i.imgur.com/nPNH1CF.png);
+                background-size: contain;
+                background-repeat: no-repeat;
+                height: 30px;
+                width: 150px;
+            }
+        </style>
     </header>
     <div class="container">
         <main role="main" class="pb-3">

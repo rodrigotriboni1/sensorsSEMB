@@ -46,86 +46,85 @@ namespace sensoresMAUISEMB
 
         private async void StartCPUUsageAndFrequencyUpdates()
         {
-            int timeCounter = 0; // To track the time for the chart
+            int timeCounter = 0;
+            int maxPoints = 10;
+
             while (true)
             {
                 try
                 {
 #if ANDROID
-                    // Get CPU Usage
-                    double cpuUsage = await GetCPUUsageAsync();
-                    cpuUsageLabel.Text = $"CPU Usage: {cpuUsage}%";
+            double cpuUsage = await GetCPUUsageAsync();
+            cpuUsageLabel.Text = $"CPU Usage: {cpuUsage}%";
 
-                    // Add data to the chart
-                    CPUUsageData.Add(new CPUUsageData { Time = timeCounter++, Usage = cpuUsage });
+            CPUUsageData.Add(new CPUUsageData { Time = timeCounter++, Usage = cpuUsage });
 
-                    // Get CPU Frequencies
-                    await GetCPUFrequenciesAsync();
+            // Remove the oldest point if the limit is reached
+            if (CPUUsageData.Count > maxPoints)
+            {
+                CPUUsageData.RemoveAt(0); 
+            }
+
+            await GetCPUFrequenciesAsync();
 #else
-                cpuUsageLabel.Text = "CPU Usage: Not Supported on this platform";
+                    // ... other platform code ...
 #endif
                 }
                 catch (Exception ex)
                 {
-                    cpuUsageLabel.Text = $"CPU Usage: Error - {ex.Message}";
-                    Debug.WriteLine($"Error getting CPU usage or frequencies: {ex}");
+                    // ... error handling ...
                 }
-                await Task.Delay(100); // Update milisecond
+                await Task.Delay(0);
             }
         }
 
         private async Task GetCPUFrequenciesAsync()
         {
 #if ANDROID
-            try
+    try
+    {
+        Java.Lang.Runtime runtime = Java.Lang.Runtime.GetRuntime();
+        int coreCount = runtime.AvailableProcessors();
+
+        // Ensure the list is initialized only once
+        if (CoresList.Count == 0)
+        {
+            for (int i = 0; i < coreCount; i++)
             {
-                Java.Lang.Runtime runtime = Java.Lang.Runtime.GetRuntime();
-                int coreCount = runtime.AvailableProcessors();
-                CoresList.Clear();
+                CoresList.Add(new CoreInfo { CoreName = $"Core {i+1}" });
+            }
+        }
 
-                for (int i = 0; i < coreCount; i++)
+        for (int i = 0; i < coreCount; i++)
+        {
+            string path = $"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq";
+            if (File.Exists(path))
+            {
+                try
                 {
-                    string path = $"/sys/devices/system/cpu/cpu{i}/cpufreq/scaling_cur_freq";
-                    if (File.Exists(path))
-                    {
-                        try
-                        {
-                            // Read the frequency in kHz
-                            string freqStr = await File.ReadAllTextAsync(path);
-                            long freqKHz = long.Parse(freqStr.Trim());
+                    string freqStr = await File.ReadAllTextAsync(path);
+                    long freqKHz = long.Parse(freqStr.Trim());
+                    double freqMHz = freqKHz / 1000.0;
 
-                            // Convert to MHz
-                            double freqMHz = freqKHz / 1000.0;
-                            CoresList.Add(new CoreInfo
-                            {
-                                CoreName = $"Core {i}",
-                                Frequency = $"{freqMHz} MHz"
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            CoresList.Add(new CoreInfo
-                            {
-                                CoreName = $"Core {i}",
-                                Frequency = $"Error reading frequency - {ex.Message}"
-                            });
-                            Debug.WriteLine($"Error reading frequency for core {i}: {ex}");
-                        }
-                    }
-                    else
-                    {
-                        CoresList.Add(new CoreInfo
-                        {
-                            CoreName = $"Core {i}",
-                            Frequency = "Frequency info not available"
-                        });
-                    }
+                    // Update the Frequency property of the existing object
+                    CoresList[i].Frequency = $"{freqMHz} MHz"; 
+                }
+                catch (Exception ex)
+                {
+                    CoresList[i].Frequency = $"Error reading frequency - {ex.Message}";
+                    Debug.WriteLine($"Error reading frequency for core {i}: {ex}");
                 }
             }
-            catch (Exception ex)
+            else
             {
-                Debug.WriteLine($"Error getting CPU frequencies: {ex}");
+                CoresList[i].Frequency = "Frequency info not available";
             }
+        }
+    }
+    catch (Exception ex)
+    {
+        Debug.WriteLine($"Error getting CPU frequencies: {ex}");
+    }
 #endif
         }
 

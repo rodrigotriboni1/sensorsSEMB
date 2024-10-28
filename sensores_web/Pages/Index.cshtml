@@ -1,19 +1,31 @@
 ﻿@page
 @model IndexModel
+@using Syncfusion.EJ2
+
 @{
     ViewData["Title"] = "Home page";
 }
-<div class="col-lg-12 control-section default-appbar-section">
-    <ejs-appbar id="defaultAppBar" colorMode="Primary">
-        <e-content-template>
-            <ejs-button aria-label="menu" id="defaultButtonMenu" cssClass="e-inherit" iconCss="e-icons e-menu"></ejs-button>
-            <span class="regular" style="margin:0 5px">EJ2 AppBar</span>
-            <div class="e-appbar-spacer"></div>
-            <ejs-button id="defaultButtonLogin" cssClass="e-inherit" content="FREE TRIAL"></ejs-button>
-        </e-content-template>
-    </ejs-appbar>
-</div>
+
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Sensor Data</h1>
+
+    <ejs-grid id="Grid" dataSource="@Model.SensorDataList" allowPaging="true">
+        <e-grid-columns>
+            <e-grid-column field="Id" headerText="ID" isPrimaryKey="true"></e-grid-column>
+            <e-grid-column field="SensorName" headerText="Sensor Name"></e-grid-column>
+            <e-grid-column field="SensorType" headerText="Sensor Type"></e-grid-column>
+            <e-grid-column field="ValueX" headerText="Value X"></e-grid-column>
+            <e-grid-column field="ValueY" headerText="Value Y"></e-grid-column>
+            <e-grid-column field="ValueZ" headerText="Value Z"></e-grid-column>
+            <e-grid-column field="Timestamp" headerText="Timestamp" format="yyyy-MM-dd HH:mm:ss"></e-grid-column>
+        </e-grid-columns>
+    </ejs-grid>
 </div>
+
+<script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+<script>
+    var grid = new ej.grids.Grid({
+    });
+    grid.appendTo('#Grid'); 
+</script>

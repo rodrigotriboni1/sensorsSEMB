@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-builder.WebHost.UseUrls("http://localhost:5202", "http://192.168.56.1:5202", "http://192.168.100.28:5202");
+builder.WebHost.UseUrls("http://localhost:5202", "http://192.168.100.34:5202", "http://192.168.56.1:5202");
 
 
 // Configure the HTTP request pipeline.

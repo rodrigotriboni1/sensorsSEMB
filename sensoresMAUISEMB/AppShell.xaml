@@ -21,10 +21,10 @@
             Route="Performance"
             Icon="memory.png"/>
         <ShellContent
-            Title="Settings"
-            ContentTemplate="{DataTemplate local:Settings}"
-            Route="Settings"
-            Icon="settings.png"/>
+            Title="Developers"
+            ContentTemplate="{DataTemplate local:Developers}"
+            Route="Developers"
+            Icon="groups.png"/>
     </TabBar>
     
 

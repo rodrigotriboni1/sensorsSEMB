@@ -49,7 +49,15 @@ namespace sensoresMAUISEMB
 
         public static async Task ShowSensorNotSupportedMessage(string sensorName)
         {
-            await Application.Current.MainPage.DisplayAlert("Sensor Not Supported", $"{sensorName} is not supported on this device.", "OK");
+            string message = $"{sensorName} não é compatível com o celular.";
+
+            // Exibe a mensagem no AlertBox
+            await DisplayAlert("Sensor não suportado", message, "OK");
+        }
+
+        public static async Task DisplayAlert(string title, string message, string cancel)
+        {   
+            await App.Current.MainPage.DisplayAlert(title, message, cancel);
         }
 
     }

@@ -78,6 +78,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\groups.png" />
 	  <None Remove="Resources\Images\home.png" />
 	  <None Remove="Resources\Images\memory.png" />
 	  <None Remove="Resources\Images\settings.png" />
@@ -100,6 +101,7 @@
 		<PackageReference Include="Syncfusion.Maui.Charts" Version="27.1.53" />
 		<PackageReference Include="Syncfusion.Maui.Gauges" Version="27.1.53" />
 		<PackageReference Include="Syncfusion.Maui.ListView" Version="27.1.55" />
+		<PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.1" />
 		<PackageReference Include="System.Management" Version="8.0.0" />
 		<PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
 	</ItemGroup>
@@ -114,13 +116,19 @@
 	  <MauiXaml Update="Performance.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Settings.xaml">
+	  <MauiXaml Update="Developers.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Resources\Views\Desktop\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Developers.xaml.cs">
+	    <DependentUpon>Developers.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionsensoresMAUISEMBHideInfoBar="True" /></VisualStudio></ProjectExtensions>

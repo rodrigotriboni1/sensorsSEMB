@@ -17,10 +17,10 @@
 
         <!-- Scrollable Content -->
         <ScrollView Grid.Row="0">
-            <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="#F7F2F9">
+            <VerticalStackLayout Padding="10" Spacing="10" BackgroundColor="{AppThemeBinding Light=White}">
 
                 <!-- Accelerometer Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Accelerometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="AccelLabel" Text="Not started" TextColor="Red" />
@@ -35,7 +35,8 @@
                                                 HeightRequest="300" 
                                                 HorizontalOptions="Center" 
                                                 VerticalOptions="Center" 
-                                                IsVisible="False">
+                                                IsVisible="False"
+                                                BackgroundColor="Transparent">
 
                             <chart:SfCartesianChart.Title>
                                 <Label Margin="0,0,0,5" 
@@ -83,7 +84,7 @@
 
 
                 <!-- Barometer Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Barometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="BarometerLabel" Text="Not started" TextColor="Red" />
@@ -92,7 +93,7 @@
                 </mdc:Card>
 
                 <!-- Compass Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green">
                     <VerticalStackLayout>
                         <VerticalStackLayout.BindingContext>
                             <local:RadialGaugeViewModel/>
@@ -188,7 +189,7 @@
                     </VerticalStackLayout>
                 </mdc:Card>
                 <!-- Gyroscope Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Gyroscope" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="GyroscopeLabel" Text="Not started" TextColor="Red" />
@@ -197,7 +198,7 @@
                 </mdc:Card>
 
                 <!-- Magnetometer Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green" >
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green" >
                     <VerticalStackLayout>
                         <Label Text="Magnetometer" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="MagnetometerLabel" Text="Not started" TextColor="Red" />
@@ -206,7 +207,7 @@
                 </mdc:Card>
 
                 <!-- Orientation Sensor Card -->
-                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="#E7E0EC" OutlineColor="Green">
+                <mdc:Card Style="{DynamicResource FilledCardStyle}" BackgroundColor="{DynamicResource Secondary}" OutlineColor="Green">
                     <VerticalStackLayout>
                         <Label Text="Orientation" FontSize="Medium" TextColor="Black" />
                         <Label x:Name="OrientationLabel" Text="Not started" TextColor="Red" />
