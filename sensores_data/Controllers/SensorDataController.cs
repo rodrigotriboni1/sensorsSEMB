@@ -13,6 +13,17 @@ namespace sensores_data.Controllers
             _context = context;
         }
 
+        [HttpGet("updates")]
+        public IActionResult GetSensorUpdates(DateTime? lastUpdate)
+        {
+            var updates = _context.SensorData
+                .Where(s => lastUpdate == null || s.Timestamp > lastUpdate) // Get all if no lastUpdate 
+                .OrderBy(s => s.Timestamp)
+                .ToList();
+
+            return Ok(updates);
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostSensorData([FromBody] SensorData sensorData)
         {
