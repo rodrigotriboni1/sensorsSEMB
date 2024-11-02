@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using sensores_data.Models;
 using System.Threading.Tasks;
 namespace sensores_data
 

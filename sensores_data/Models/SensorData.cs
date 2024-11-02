@@ -1,6 +1,4 @@
-﻿
-
-namespace sensores_data
+﻿namespace sensores_data.Models
 {
     public class SensorData
     {

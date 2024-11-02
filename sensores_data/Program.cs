@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-builder.WebHost.UseUrls("http://localhost:5202", "http://192.168.100.34:5202", "http://192.168.56.1:5202");
+builder.WebHost.UseUrls("http://localhost:5202", "http://192.168.15.47:5202", "http://192.168.56.1:5202");
 
 
 // Configure the HTTP request pipeline.
@@ -61,6 +61,5 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred creating/migrating the database.");
     }
 }
-
 app.Run();
 

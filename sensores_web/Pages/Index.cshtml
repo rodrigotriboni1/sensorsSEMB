@@ -1,90 +1,32 @@
 ﻿@page
 @model IndexModel
 @using Syncfusion.EJ2
-@using Syncfusion.EJ2.Charts
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration // Inject configuration
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home page";
 }
+
 
 <div class="text-center">
     <h1 class="display-4">Sensor Data</h1>
+
+    <ejs-grid id="Grid" dataSource="@Model.SensorDataList" allowPaging="true">
+        <e-grid-columns>
+            <e-grid-column field="Id" headerText="ID" isPrimaryKey="true"></e-grid-column>
+            <e-grid-column field="SensorName" headerText="Sensor Name"></e-grid-column>
+            <e-grid-column field="SensorType" headerText="Sensor Type"></e-grid-column>
+            <e-grid-column field="ValueX" headerText="Value X"></e-grid-column>
+            <e-grid-column field="ValueY" headerText="Value Y"></e-grid-column>
+            <e-grid-column field="ValueZ" headerText="Value Z"></e-grid-column>
+            <e-grid-column field="Timestamp" headerText="Timestamp" format="yyyy-MM-dd HH:mm:ss"></e-grid-column>
+        </e-grid-columns>
+    </ejs-grid>
 </div>
 
-<div class="row">
-    <div class="col-md-12"> 
-        <ejs-grid id="Grid" dataSource="@Model.SensorDataList" allowPaging="true">
-            <e-grid-columns>
-                <e-grid-column field="Id" headerText="ID" isPrimaryKey="true"></e-grid-column>
-                <e-grid-column field="SensorName" headerText="Sensor Name"></e-grid-column>
-                <e-grid-column field="SensorType" headerText="Sensor Type"></e-grid-column>
-                <e-grid-column field="ValueX" headerText="Value X"></e-grid-column>
-                <e-grid-column field="ValueY" headerText="Value Y"></e-grid-column>
-                <e-grid-column field="ValueZ" headerText="Value Z"></e-grid-column>
-                <e-grid-column field="Timestamp" headerText="Timestamp" format="yyyy-MM-dd HH:mm:ss"></e-grid-column> 
-            </e-grid-columns>
-        </ejs-grid>
-    </div>
-</div>
 
-<div class="row mt-4"> 
-    <div class="col-md-12">
-        <ejs-chart id="sensorChart" title="Sensor Readings Over Time">
-            <e-chart-primaryxaxis valueType="DateTime" labelFormat="HH:mm" title="Time"></e-chart-primaryxaxis> 
-            <e-chart-primaryyaxis title="Sensor Value"></e-chart-primaryyaxis>
-
-            <e-series-collection>
-                <e-series id="valueXSeries" dataSource="@Model.SensorDataList"
-                          xName="Timestamp" yName="ValueX" name="Value X" type="Line"> 
-                </e-series>
-                <e-series id="valueYSeries" dataSource="@Model.SensorDataList"
-                          xName="Timestamp" yName="ValueY" name="Value Y" type="Line"> 
-                </e-series>
-                <e-series id="valueZSeries" dataSource="@Model.SensorDataList"
-                          xName="Timestamp" yName="ValueZ" name="Value Z" type="Line"> 
-                </e-series>
-            </e-series-collection>
-        </ejs-chart>
-    </div>
-</div>
-
+<script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
 <script>
-    // ... (Grid initialization) ...
-
-    var chart = new ej.charts.Chart({});
-    chart.appendTo('#sensorChart');
-
-    var lastUpdate = new Date('@Model.SensorDataList.Max(s => s.Timestamp).ToString("o")'); // Initial timestamp
-
-    function updateChartData() {
-        $.ajax({
-            url: '@Url.Action("GetSensorUpdates", "SensorData")', 
-            type: 'GET',
-            data: { lastUpdate: lastUpdate.toISOString() },
-            success: function (data) {
-                if (data.length > 0) {
-                    lastUpdate = new Date(Math.max(...data.map(d => new Date(d.timestamp)))); 
-
-                    var valueXSeries = chart.series[0];
-                    var valueYSeries = chart.series[1];
-                    var valueZSeries = chart.series[2];
-
-                    data.forEach(item => {
-                        valueXSeries.addPoint([new Date(item.timestamp), item.valueX], false);
-                        valueYSeries.addPoint([new Date(item.timestamp), item.valueY], false);
-                        valueZSeries.addPoint([new Date(item.timestamp), item.valueZ], false);
-                    }); 
-
-                    chart.refresh();
-                }
-            }
-        });
-    }
-
-    // Call updateChartData initially to populate the chart
-    updateChartData(); 
-
-    var updateInterval = @(Configuration.GetValue<int?>("ChartUpdateInterval") ?? 5000); // Get interval from config
-    setInterval(updateChartData, updateInterval); 
+    var grid = new ej.grids.Grid({
+    });
+    grid.appendTo('#Grid');
 </script>

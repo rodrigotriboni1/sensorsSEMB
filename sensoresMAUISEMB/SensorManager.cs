@@ -15,10 +15,9 @@ namespace sensoresMAUISEMB
         readonly Label AccelLabel = accelLabel, BarometerLabel = barometerLabel, CompassLabel = compassLabel, GyroscopeLabel = gyroscopeLabel, MagnetometerLabel = magnetometerLabel, OrientationLabel = orientationLabel;
 
         public event Action<double, double, double>? AccelerometerReadingChanged;
-       // public event EventHandler<CompassChangedEventArgs>? CompassReadingChanged;
 
         private static readonly HttpClient _httpClient = new HttpClient();
-        private const string ApiUrl = "http://192.168.100.34:5202/api/SensorData"; // API route
+        private const string ApiUrl = "http://192.168.15.47:5202/api/SensorData"; // API route
 
         private static SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
         {

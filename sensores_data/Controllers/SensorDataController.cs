@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using sensores_data.Models;
 namespace sensores_data.Controllers
 {
     [ApiController]
@@ -11,17 +12,6 @@ namespace sensores_data.Controllers
         public SensorDataController(SensorDbContext context)
         {
             _context = context;
-        }
-
-        [HttpGet("updates")]
-        public IActionResult GetSensorUpdates(DateTime? lastUpdate)
-        {
-            var updates = _context.SensorData
-                .Where(s => lastUpdate == null || s.Timestamp > lastUpdate) // Get all if no lastUpdate 
-                .OrderBy(s => s.Timestamp)
-                .ToList();
-
-            return Ok(updates);
         }
 
         [HttpPost]
