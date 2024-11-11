@@ -12,9 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<SensorDbContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString(name: "SensorDbConnection")));
-builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseMySQL(builder.Configuration.GetConnectionString(name: "SensorDbConnection")));
-
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -22,7 +19,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-builder.WebHost.UseUrls("http://localhost:5202", "http://192.168.15.47:5202", "http://192.168.56.1:5202");
+
 
 
 // Configure the HTTP request pipeline.
@@ -37,22 +34,22 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
+app.UseCors(builder =>
+    builder.AllowAnyOrigin()
+           .AllowAnyMethod()
+           .AllowAnyHeader());
 
-// Database Migration and Seeding (Optional, but highly recommended)
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<SensorDbContext>();
-        var contextUser = services.GetRequiredService<UserDbContext>();
-        if (context.Database.GetPendingMigrations().Any() || contextUser.Database.GetPendingMigrations().Any())
+        if (context.Database.GetPendingMigrations().Any())
         {
-            contextUser.Database.Migrate();
             context.Database.Migrate(); // Apply any pending migrations
         }
-        // You can add database seeding here if needed.
-        //  e.g., AddSeedData(context); // Call a seeding method 
 
     }
     catch (Exception ex)

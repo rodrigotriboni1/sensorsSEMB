@@ -15,10 +15,6 @@ namespace sensoresMAUISEMB
         readonly Label AccelLabel = accelLabel, BarometerLabel = barometerLabel, CompassLabel = compassLabel, GyroscopeLabel = gyroscopeLabel, MagnetometerLabel = magnetometerLabel, OrientationLabel = orientationLabel;
 
         public event Action<double, double, double>? AccelerometerReadingChanged;
-
-        private static readonly HttpClient _httpClient = new HttpClient();
-        private const string ApiUrl = "http://192.168.15.47:5202/api/SensorData"; // API route
-
         private static SensorData CreateSensorData(string sensorName, string sensorType, double valueX, double valueY, double valueZ)
         {
             return new SensorData
@@ -31,47 +27,9 @@ namespace sensoresMAUISEMB
                 Timestamp = DateTime.UtcNow // Or DateTime.Now if you prefer local time
             };
         }
-        public static async Task SendSensorDataAsync(SensorData sensorData)
+        public async Task SendSensorDataAsync(SensorData sensorData)
         {
-            try
-            {
-                // Serialize the sensor data to JSON
-                var json = JsonSerializer.Serialize(sensorData);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                // Send the HTTP POST request
-                var response = await _httpClient.PostAsync(ApiUrl, content);
-
-                // Handle the response
-                if (response.IsSuccessStatusCode)
-                {
-                    var returnedData = await response.Content.ReadFromJsonAsync<SensorData>();
-                    if (returnedData != null)
-                    {
-                        sensorData.Id = returnedData.Id;
-                        Console.WriteLine($"Data sent successfully! ID: {sensorData.Id}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Response was successful, but no ID returned.");
-                    }
-                }
-                else
-                {
-                    // Capture the error content and status code
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"Error: {response.StatusCode} - {errorContent}");
-
-                }
-            }
-            catch (HttpRequestException httpEx)
-            {
-                Console.WriteLine($"HTTP Error: {httpEx.Message}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-            }
+            await Config.SendSensorDataAsync(sensorData);
         }
 
 

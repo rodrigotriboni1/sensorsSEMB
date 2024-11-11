@@ -12,6 +12,8 @@ namespace sensores_data
         }
         public DbSet<SensorData> SensorData { get; set; }
 
+        public DbSet<SensorStatus> SensorStatuses { get; set; } 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure the Id as primary key (you can customize further if needed).

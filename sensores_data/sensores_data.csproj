@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\UserController.cs" />
+    <Compile Remove="LoginDto.cs" />
+    <Compile Remove="User.cs" />
+    <Compile Remove="UserDbContext.cs" />
     <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 

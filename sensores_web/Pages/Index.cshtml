@@ -6,10 +6,10 @@
     ViewData["Title"] = "Home page";
 }
 
-
 <div class="text-center">
     <h1 class="display-4">Sensor Data</h1>
 
+    <!-- Grid para exibir os dados dos sensores -->
     <ejs-grid id="Grid" dataSource="@Model.SensorDataList" allowPaging="true">
         <e-grid-columns>
             <e-grid-column field="Id" headerText="ID" isPrimaryKey="true"></e-grid-column>
@@ -21,12 +21,54 @@
             <e-grid-column field="Timestamp" headerText="Timestamp" format="yyyy-MM-dd HH:mm:ss"></e-grid-column>
         </e-grid-columns>
     </ejs-grid>
-</div>
 
+    <!-- Gráfico para exibir os dados em tempo real -->
+    <ejs-chart id="SensorChart">
+        <e-chart-primaryxaxis valueType="DateTime" labelFormat="HH:mm:ss"></e-chart-primaryxaxis>
+        <e-chart-primaryyaxis title="Sensor Values"></e-chart-primaryyaxis>
+        <e-series-collection>
+            <!-- Série do gráfico para valores de X -->
+            <e-series name="Value X" type="Line" xName="Timestamp" yName="ValueX" dataSource="@Model.SensorDataList"></e-series>
+            <!-- Série do gráfico para valores de Y -->
+            <e-series name="Value Y" type="Line" xName="Timestamp" yName="ValueY" dataSource="@Model.SensorDataList"></e-series>
+            <!-- Série do gráfico para valores de Z -->
+            <e-series name="Value Z" type="Line" xName="Timestamp" yName="ValueZ" dataSource="@Model.SensorDataList"></e-series>
+        </e-series-collection>
+    </ejs-chart>
+</div>
 
 <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
 <script>
-    var grid = new ej.grids.Grid({
-    });
+    var grid = new ej.grids.Grid({});
     grid.appendTo('#Grid');
+
+    var chart = new ej.charts.Chart({
+        primaryXAxis: { valueType: 'DateTime', labelFormat: 'HH:mm:ss' },
+        primaryYAxis: { title: 'Sensor Values' },
+        series: [
+            { name: 'Value X', type: 'Line', xName: 'Timestamp', yName: 'ValueX', dataSource: [] },
+            { name: 'Value Y', type: 'Line', xName: 'Timestamp', yName: 'ValueY', dataSource: [] },
+            { name: 'Value Z', type: 'Line', xName: 'Timestamp', yName: 'ValueZ', dataSource: [] }
+        ]
+    });
+    chart.appendTo('#SensorChart');
+
+    // Função para atualizar o gráfico em tempo real
+    function updateChart() {
+        // Obter os dados do Grid
+        var data = grid.dataSource;
+        if (data && data.length > 0) {
+            // Filtrar dados dos últimos 10 segundos
+            var now = new Date();
+            var filteredData = data.filter(d => (now - new Date(d.Timestamp)) <= 10000);
+
+            // Atualizar as séries do gráfico com os dados filtrados
+            chart.series[0].dataSource = filteredData.map(d => ({ Timestamp: new Date(d.Timestamp), ValueX: d.ValueX }));
+            chart.series[1].dataSource = filteredData.map(d => ({ Timestamp: new Date(d.Timestamp), ValueY: d.ValueY }));
+            chart.series[2].dataSource = filteredData.map(d => ({ Timestamp: new Date(d.Timestamp), ValueZ: d.ValueZ }));
+
+            chart.refresh(); // Atualizar o gráfico
+        }
+    }
+    setInterval(updateChart, 10);
 </script>
